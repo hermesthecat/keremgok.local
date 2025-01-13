@@ -17,3 +17,9 @@ Options +ExecCGI +FollowSymLinks
 
 # 404 Error Page
 ErrorDocument 404 /404.html
+
+# URL yönlendirmeleri
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /404.html [L,QSA]
