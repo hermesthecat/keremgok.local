@@ -1,8 +1,51 @@
 <!DOCTYPE html>
-<html data-theme="dark">
+<html data-theme="dark" lang="en">
   <head>
-    <title>a. kerem gök..</title>
+    <title data-lang-key="title">a. kerem gok..</title>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A. Kerem Gök - Software Developer" />
+    <meta
+      name="keywords"
+      content="kerem gök, software developer, web developer, javascript, php"
+    />
+    <meta name="author" content="A. Kerem Gök" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://keremgok.local/" />
+    <meta property="og:title" content="A. Kerem Gök" />
+    <meta
+      property="og:description"
+      content="A. Kerem Gök - Software Developer"
+    />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:url" content="https://keremgok.local/" />
+    <meta name="twitter:title" content="A. Kerem Gök" />
+    <meta
+      name="twitter:description"
+      content="A. Kerem Gök - Software Developer"
+    />
+    <meta name="twitter:creator" content="@abdullahazad" />
+
+    <!-- Robots -->
+    <meta name="robots" content="index, follow" />
+
+    <!-- Language Alternatives -->
+    <link
+      rel="alternate"
+      hreflang="tr"
+      href="https://keremgok.local/?lang=tr"
+    />
+    <link
+      rel="alternate"
+      hreflang="en"
+      href="https://keremgok.local/?lang=en"
+    />
+    <link rel="canonical" href="https://keremgok.local/" />
+
     <style>
       :root[data-theme="light"] {
         --bg-color: #ffffff;
@@ -27,10 +70,9 @@
         transition: background-color 0.3s ease, color 0.3s ease;
       }
 
-      #theme-toggle {
+      #theme-toggle,
+      #lang-toggle {
         position: fixed;
-        top: 20px;
-        right: 20px;
         padding: 8px 16px;
         border: none;
         border-radius: 4px;
@@ -40,7 +82,18 @@
         transition: all 0.3s ease;
       }
 
-      #theme-toggle:hover {
+      #theme-toggle {
+        top: 20px;
+        right: 20px;
+      }
+
+      #lang-toggle {
+        top: 20px;
+        right: 90px;
+      }
+
+      #theme-toggle:hover,
+      #lang-toggle:hover {
         opacity: 0.8;
       }
 
@@ -70,8 +123,9 @@
   </head>
   <body>
     <button id="theme-toggle">🌙</button>
-    <h1>a. kerem gök..</h1>
-    <p>
+    <button id="lang-toggle">TR</button>
+    <h1 data-lang-key="title">a. kerem gök..</h1>
+    <p data-lang-key="intro">
       If you are seeing this page, it means that approximately 10 seconds of
       your life have been wasted.
     </p>
@@ -82,6 +136,22 @@
     </p>
 
     <script>
+      // Dil verileri
+      const translations = {
+        tr: {
+          title: "a. kerem gök..",
+          intro:
+            "Bu sayfayı görüyorsanız, hayatınızdan yaklaşık 10 saniye boşa harcandı demektir.",
+          langButton: "EN",
+        },
+        en: {
+          title: "a. kerem gok..",
+          intro:
+            "If you are seeing this page, it means that approximately 10 seconds of your life have been wasted.",
+          langButton: "TR",
+        },
+      };
+
       // Cookie işlemleri için yardımcı fonksiyonlar
       const setCookie = (name, value, days = 365) => {
         const date = new Date();
@@ -95,6 +165,49 @@
         if (parts.length === 2) return parts.pop().split(";").shift();
         return null;
       };
+
+      // Dil değiştirme fonksiyonu
+      const setLanguage = (lang) => {
+        document.documentElement.lang = lang;
+        document.querySelectorAll("[data-lang-key]").forEach((element) => {
+          const key = element.getAttribute("data-lang-key");
+          element.textContent = translations[lang][key];
+          if (element.tagName.toLowerCase() === "title") {
+            document.title = translations[lang][key];
+          }
+        });
+        document.getElementById("lang-toggle").textContent =
+          translations[lang].langButton;
+        setCookie("lang", lang);
+      };
+
+      // Başlangıç dilini belirle
+      const getInitialLang = () => {
+        // 1. URL'den dil parametresini kontrol et
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlLang = urlParams.get("lang");
+        if (urlLang && ["tr", "en"].includes(urlLang)) return urlLang;
+
+        // 2. Cookie'den kontrol et
+        const cookieLang = getCookie("lang");
+        if (cookieLang) return cookieLang;
+
+        // 3. Tarayıcı dilini kontrol et
+        const browserLang = navigator.language.split("-")[0];
+        return browserLang === "tr" ? "tr" : "en";
+      };
+
+      // Dil değiştirme butonu
+      const langToggle = document.getElementById("lang-toggle");
+      langToggle.addEventListener("click", () => {
+        const currentLang = document.documentElement.lang;
+        const newLang = currentLang === "tr" ? "en" : "tr";
+        // URL'yi güncelle
+        const url = new URL(window.location);
+        url.searchParams.set("lang", newLang);
+        window.history.pushState({}, "", url);
+        setLanguage(newLang);
+      });
 
       // Theme toggle functionality
       const themeToggle = document.getElementById("theme-toggle");
@@ -127,6 +240,10 @@
         setCookie("theme", newTheme);
         themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
       });
+
+      // Başlangıç ayarları
+      const initialLang = getInitialLang();
+      setLanguage(initialLang);
     </script>
   </body>
 </html>
