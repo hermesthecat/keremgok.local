@@ -1,16 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="dark">
   <head>
     <title>a. kerem gök..</title>
     <meta charset="utf-8" />
     <style>
+      :root[data-theme="light"] {
+        --bg-color: #ffffff;
+        --text-color: #000000;
+      }
+
+      :root[data-theme="dark"] {
+        --bg-color: #1a1a1a;
+        --text-color: #ffffff;
+      }
+
       html {
         color-scheme: light dark;
       }
+
       body {
         width: 35em;
         margin: 0 auto;
         font-family: Tahoma, Verdana, Arial, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      #theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        background-color: var(--text-color);
+        color: var(--bg-color);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      #theme-toggle:hover {
+        opacity: 0.8;
+      }
+
+      a {
+        color: #0066cc;
+      }
+
+      :root[data-theme="dark"] a {
+        color: #66b3ff;
       }
     </style>
 
@@ -30,6 +69,7 @@
     </script>
   </head>
   <body>
+    <button id="theme-toggle">🌙</button>
     <h1>a. kerem gök..</h1>
     <p>
       If you are seeing this page, it means that approximately 10 seconds of
@@ -37,7 +77,56 @@
     </p>
 
     <p>
-      <a href="https://twitter.com/abdullahazad">twitter</a>
+      <a href="https://twitter.com/abdullahazad">twitter</a> •
+      <a href="https://github.com/keremgok">github</a>
     </p>
+
+    <script>
+      // Cookie işlemleri için yardımcı fonksiyonlar
+      const setCookie = (name, value, days = 365) => {
+        const date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+      };
+
+      const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+        return null;
+      };
+
+      // Theme toggle functionality
+      const themeToggle = document.getElementById("theme-toggle");
+      const html = document.documentElement;
+
+      const getInitialTheme = () => {
+        // 1. Önce cookie'yi kontrol et
+        const cookieTheme = getCookie("theme");
+        if (cookieTheme) return cookieTheme;
+
+        // 2. Cookie yoksa tarayıcı tercihine bak
+        if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+          return "light";
+        }
+
+        // 3. Varsayılan olarak dark kullan (HTML ile uyumlu)
+        return "dark";
+      };
+
+      // Başlangıç temasını ayarla
+      const initialTheme = getInitialTheme();
+      html.dataset.theme = initialTheme;
+      themeToggle.textContent = initialTheme === "dark" ? "☀️" : "🌙";
+
+      themeToggle.addEventListener("click", () => {
+        const currentTheme = html.dataset.theme;
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+        html.dataset.theme = newTheme;
+        setCookie("theme", newTheme);
+        themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
+      });
+    </script>
   </body>
 </html>
