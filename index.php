@@ -124,6 +124,11 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
 <body>
   <button id="theme-toggle">🌙</button>
   <button id="lang-toggle">TR</button>
+  <button id="lang-toggle">EN</button>
+  <button id="lang-toggle">FR</button>
+  <button id="lang-toggle">ES</button>
+  <button id="lang-toggle">DE</button>
+  <button id="lang-toggle">IT</button>
   <h1 data-lang-key="title">a. kerem gök..</h1>
   <p data-lang-key="intro">
     If you are seeing this page, it means that approximately 10 seconds of
@@ -204,7 +209,7 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
       // 1. URL'den dil parametresini kontrol et
       const urlParams = new URLSearchParams(window.location.search);
       const urlLang = urlParams.get("lang");
-      if (urlLang && ["tr", "en"].includes(urlLang)) return urlLang;
+      if (urlLang && ["tr", "en", "fr", "es", "de", "it"].includes(urlLang)) return urlLang;
 
       // 2. Cookie'den kontrol et
       const cookieLang = getCookie("lang");
@@ -212,14 +217,18 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
 
       // 3. Tarayıcı dilini kontrol et
       const browserLang = navigator.language.split("-")[0];
-      return browserLang === "tr" ? "tr" : "en";
+      return ["tr", "en", "fr", "es", "de", "it"].includes(browserLang) ? browserLang : "en";
     };
 
     // Dil değiştirme butonu
     const langToggle = document.getElementById("lang-toggle");
     langToggle.addEventListener("click", () => {
       const currentLang = document.documentElement.lang;
-      const newLang = currentLang === "tr" ? "en" : "tr";
+      const newLang = currentLang === "tr" ? "en" :
+        currentLang === "en" ? "fr" :
+        currentLang === "fr" ? "es" :
+        currentLang === "es" ? "de" :
+        currentLang === "de" ? "it" : "tr";
       // URL'yi güncelle
       const url = new URL(window.location);
       url.searchParams.set("lang", newLang);
