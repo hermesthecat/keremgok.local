@@ -148,6 +148,26 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
         intro: "If you are seeing this page, it means that approximately 10 seconds of your life have been wasted.",
         langButton: "TR",
       },
+      fr: {
+        title: "a. kerem gok..",
+        intro: "Si vous voyez cette page, cela signifie qu'environ 10 secondes de votre vie ont été gaspillées.",
+        langButton: "FR",
+      },
+      es: {
+        title: "a. kerem gok..",
+        intro: "Si ves esta página, significa que aproximadamente 10 segundos de tu vida han sido desperdiciados.",
+        langButton: "ES",
+      },
+      de: {
+        title: "a. kerem gok..",
+        intro: "Wenn Sie diese Seite sehen, bedeutet das, dass etwa 10 Sekunden Ihres Lebens verschwendet wurden.",
+        langButton: "DE",
+      },
+      it: {
+        title: "a. kerem gok..",
+        intro: "Se stai vedendo questa pagina, significa che circa 10 secondi della tua vita sono stati sprecati.",
+        langButton: "IT",
+      },
     };
 
     // Cookie işlemleri için yardımcı fonksiyonlar
