@@ -2,8 +2,11 @@
 // Create dynamic domain URL with HTTP/HTTPS check
 // Dinamik domain URL'si oluştur (HTTP/HTTPS kontrolü ile)
 $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+
 $twitter_username = "abdullahazad";
 $github_username = "hermesthecat";
+$googletag_id = "G-46GJVXYD2G";
+
 ?>
 <!DOCTYPE html>
 <html data-theme="dark" lang="en">
@@ -181,7 +184,7 @@ $github_username = "hermesthecat";
   <!-- Google tag (gtag.js) -->
   <script
     async
-    src="https://www.googletagmanager.com/gtag/js?id=G-46GJVXYD2G"></script>
+    src="https://www.googletagmanager.com/gtag/js?id=<?php echo $googletag_id; ?>"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
 
@@ -190,7 +193,7 @@ $github_username = "hermesthecat";
     }
     gtag("js", new Date());
 
-    gtag("config", "G-46GJVXYD2G");
+    gtag("config", "<?php echo $googletag_id; ?>");
   </script>
 
 </head>
