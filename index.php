@@ -2,6 +2,8 @@
 // Create dynamic domain URL with HTTP/HTTPS check
 // Dinamik domain URL'si oluştur (HTTP/HTTPS kontrolü ile)
 $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+$twitter_username = "abdullahazad";
+$github_username = "hermesthecat";
 ?>
 <!DOCTYPE html>
 <html data-theme="dark" lang="en">
@@ -19,7 +21,7 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="" />
+  <meta property="og:url" content="<?php echo $domain; ?>/" />
   <meta property="og:title" content="A. Kerem Gök" />
   <meta
     property="og:description"
@@ -32,7 +34,7 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
   <meta
     name="twitter:description"
     content="A. Kerem Gök - Software Developer" />
-  <meta name="twitter:creator" content="@abdullahazad" />
+  <meta name="twitter:creator" content="@<?php echo $twitter_username; ?>" />
 
   <!-- Robots -->
   <meta name="robots" content="index, follow" />
@@ -48,19 +50,19 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
     rel="alternate"
     hreflang="en"
     href="<?php echo $domain; ?>/?lang=en" />
-    <link
+  <link
     rel="alternate"
     hreflang="de"
     href="<?php echo $domain; ?>/?lang=de" />
-    <link
+  <link
     rel="alternate"
     hreflang="es"
     href="<?php echo $domain; ?>/?lang=es" />
-    <link
+  <link
     rel="alternate"
     hreflang="fr"
     href="<?php echo $domain; ?>/?lang=fr" />
-    <link
+  <link
     rel="alternate"
     hreflang="it"
     href="<?php echo $domain; ?>/?lang=it" />
@@ -148,7 +150,7 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
       border-radius: 4px;
       overflow: hidden;
       display: none;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .language-dropdown.show {
@@ -164,7 +166,7 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
     }
 
     .lang-option:hover {
-      background-color: rgba(255,255,255,0.1);
+      background-color: rgba(255, 255, 255, 0.1);
     }
 
     a {
@@ -190,7 +192,7 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
 
     gtag("config", "G-46GJVXYD2G");
   </script>
-  
+
 </head>
 
 <body>
@@ -221,8 +223,8 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
 
   <!-- Social media links / Sosyal medya linkleri -->
   <p>
-    <a href="https://twitter.com/abdullahazad">twitter</a> •
-    <a href="https://github.com/hermesthecat">github</a>
+    <a href="https://twitter.com/<?php echo $twitter_username; ?>">twitter</a> •
+    <a href="https://github.com/<?php echo $github_username; ?>">github</a>
   </p>
 
   <script>
@@ -278,11 +280,11 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
     const setLanguage = (lang) => {
       document.documentElement.lang = lang;
       document.querySelectorAll("[data-lang-key]").forEach((element) => {
-      const key = element.getAttribute("data-lang-key");
-      element.textContent = translations[lang][key];
-      if (element.tagName.toLowerCase() === "title") {
-        document.title = translations[lang][key];
-      }
+        const key = element.getAttribute("data-lang-key");
+        element.textContent = translations[lang][key];
+        if (element.tagName.toLowerCase() === "title") {
+          document.title = translations[lang][key];
+        }
       });
       selectedLanguage.querySelector('.lang-text').textContent = lang.toUpperCase();
       setCookie("lang", lang);
@@ -314,30 +316,30 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
     // Toggle dropdown menu / Dropdown menüyü aç/kapat
     selectedLanguage.addEventListener('click', () => {
       languageDropdown.classList.toggle('show');
-      selectedLanguage.querySelector('.arrow').style.transform = 
-      languageDropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
+      selectedLanguage.querySelector('.arrow').style.transform =
+        languageDropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
     });
 
     // Close menu when clicking outside / Dışarı tıklandığında menüyü kapat
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.language-selector')) {
-      languageDropdown.classList.remove('show');
-      selectedLanguage.querySelector('.arrow').style.transform = 'rotate(0)';
+        languageDropdown.classList.remove('show');
+        selectedLanguage.querySelector('.arrow').style.transform = 'rotate(0)';
       }
     });
 
     langOptions.forEach(option => {
       option.addEventListener('click', () => {
-      const lang = option.dataset.lang;
-      setLanguage(lang);
-      selectedLanguage.querySelector('.lang-text').textContent = lang.toUpperCase();
-      languageDropdown.classList.remove('show');
-      selectedLanguage.querySelector('.arrow').style.transform = 'rotate(0)';
-      
+        const lang = option.dataset.lang;
+        setLanguage(lang);
+        selectedLanguage.querySelector('.lang-text').textContent = lang.toUpperCase();
+        languageDropdown.classList.remove('show');
+        selectedLanguage.querySelector('.arrow').style.transform = 'rotate(0)';
+
         // Update URL / URL'yi güncelle
-      const url = new URL(window.location);
-      url.searchParams.set("lang", lang);
-      window.history.pushState({}, "", url);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
       });
     });
 
@@ -346,16 +348,16 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
     const html = document.documentElement;
 
     const getInitialTheme = () => {
-        // First check cookie / Önce cookie'yi kontrol et
+      // First check cookie / Önce cookie'yi kontrol et
       const cookieTheme = getCookie("theme");
       if (cookieTheme) return cookieTheme;
 
-        // If no cookie, check browser preference / Cookie yoksa tarayıcı tercihine bak
+      // If no cookie, check browser preference / Cookie yoksa tarayıcı tercihine bak
       if (window.matchMedia("(prefers-color-scheme: light)").matches) {
         return "light";
       }
 
-        // Use dark as default (compatible with HTML) / Varsayılan olarak dark kullan (HTML ile uyumlu)
+      // Use dark as default (compatible with HTML) / Varsayılan olarak dark kullan (HTML ile uyumlu)
       return "dark";
     };
 
