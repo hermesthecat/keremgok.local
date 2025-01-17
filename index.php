@@ -342,7 +342,7 @@ $googletag_id = "G-46GJVXYD2G";
         // Update URL / URL'yi güncelle
         const url = new URL(window.location);
         url.searchParams.set("lang", lang);
-        window.history.pushState({}, "", url);
+        window.location.href = url;
       });
     });
 
