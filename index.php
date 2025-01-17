@@ -1,10 +1,13 @@
 <?php
+// Create dynamic domain URL with HTTP/HTTPS check
+// Dinamik domain URL'si oluştur (HTTP/HTTPS kontrolü ile)
 $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 ?>
 <!DOCTYPE html>
 <html data-theme="dark" lang="en">
 
 <head>
+  <!-- Basic meta tags / Temel meta etiketleri -->
   <title data-lang-key="title">a. kerem gok..</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -34,7 +37,9 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
   <!-- Robots -->
   <meta name="robots" content="index, follow" />
 
-  <!-- Language Alternatives -->
+  <link rel="canonical" href="<?php echo $domain; ?>/" />
+
+  <!-- Language Alternatives / Dil Alternatifleri -->
   <link
     rel="alternate"
     hreflang="tr"
@@ -43,9 +48,25 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
     rel="alternate"
     hreflang="en"
     href="<?php echo $domain; ?>/?lang=en" />
-  <link rel="canonical" href="<?php echo $domain; ?>/" />
+    <link
+    rel="alternate"
+    hreflang="de"
+    href="<?php echo $domain; ?>/?lang=de" />
+    <link
+    rel="alternate"
+    hreflang="es"
+    href="<?php echo $domain; ?>/?lang=es" />
+    <link
+    rel="alternate"
+    hreflang="fr"
+    href="<?php echo $domain; ?>/?lang=fr" />
+    <link
+    rel="alternate"
+    hreflang="it"
+    href="<?php echo $domain; ?>/?lang=it" />
 
   <style>
+    /* Theme color variables / Tema renk değişkenleri */
     :root[data-theme="light"] {
       --bg-color: #ffffff;
       --text-color: #000000;
@@ -56,10 +77,12 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
       --text-color: #ffffff;
     }
 
+    /* Basic style definitions / Temel stil tanımlamaları */
     html {
       color-scheme: light dark;
     }
 
+    /* Main content container style / Ana içerik container stili */
     body {
       width: 35em;
       margin: 0 auto;
@@ -69,8 +92,8 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    #theme-toggle,
-    #lang-toggle {
+    /* Theme toggle button style / Tema değiştirme butonu stili */
+    #theme-toggle {
       position: fixed;
       padding: 8px 16px;
       border: none;
@@ -79,21 +102,69 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
       color: var(--bg-color);
       cursor: pointer;
       transition: all 0.3s ease;
-    }
-
-    #theme-toggle {
       top: 20px;
       right: 20px;
     }
 
-    #lang-toggle {
-      top: 20px;
-      right: 90px;
+    #theme-toggle:hover {
+      opacity: 0.8;
     }
 
-    #theme-toggle:hover,
-    #lang-toggle:hover {
+    /* Language selector component styles / Dil seçici bileşeni stilleri */
+    .language-selector {
+      position: fixed;
+      top: 20px;
+      right: 90px;
+      z-index: 1000;
+    }
+
+    .selected-language {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background-color: var(--text-color);
+      color: var(--bg-color);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .selected-language:hover {
       opacity: 0.8;
+    }
+
+    .arrow {
+      font-size: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .language-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 4px;
+      background-color: var(--text-color);
+      border-radius: 4px;
+      overflow: hidden;
+      display: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .language-dropdown.show {
+      display: block;
+    }
+
+    .lang-option {
+      padding: 8px 16px;
+      color: var(--bg-color);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .lang-option:hover {
+      background-color: rgba(255,255,255,0.1);
     }
 
     a {
@@ -119,29 +190,43 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
 
     gtag("config", "G-46GJVXYD2G");
   </script>
+  
 </head>
 
 <body>
+  <!-- Theme toggle button / Tema değiştirme butonu -->
   <button id="theme-toggle">🌙</button>
-  <button id="lang-toggle">TR</button>
-  <button id="lang-toggle">EN</button>
-  <button id="lang-toggle">FR</button>
-  <button id="lang-toggle">ES</button>
-  <button id="lang-toggle">DE</button>
-  <button id="lang-toggle">IT</button>
+
+  <!-- Language selector dropdown menu / Dil seçici dropdown menü -->
+  <div class="language-selector">
+    <div class="selected-language" id="selected-language">
+      <span class="lang-text">EN</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="language-dropdown" id="language-dropdown">
+      <div class="lang-option" data-lang="tr">Türkçe</div>
+      <div class="lang-option" data-lang="en">English</div>
+      <div class="lang-option" data-lang="fr">Français</div>
+      <div class="lang-option" data-lang="es">Español</div>
+      <div class="lang-option" data-lang="de">Deutsch</div>
+      <div class="lang-option" data-lang="it">Italiano</div>
+    </div>
+  </div>
+  <!-- Main content / Ana içerik -->
   <h1 data-lang-key="title">a. kerem gök..</h1>
   <p data-lang-key="intro">
     If you are seeing this page, it means that approximately 10 seconds of
     your life have been wasted.
   </p>
 
+  <!-- Social media links / Sosyal medya linkleri -->
   <p>
     <a href="https://twitter.com/abdullahazad">twitter</a> •
     <a href="https://github.com/hermesthecat">github</a>
   </p>
 
   <script>
-    // Dil verileri
+    // Translations for multilingual support / Çoklu dil desteği için çeviriler
     const translations = {
       tr: {
         title: "a. kerem gök..",
@@ -175,7 +260,7 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
       },
     };
 
-    // Cookie işlemleri için yardımcı fonksiyonlar
+    // Helper functions for cookie management / Cookie yönetimi için yardımcı fonksiyonlar
     const setCookie = (name, value, days = 365) => {
       const date = new Date();
       date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
@@ -189,72 +274,92 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
       return null;
     };
 
-    // Dil değiştirme fonksiyonu
+    // Language change operations / Dil değiştirme işlemleri
     const setLanguage = (lang) => {
       document.documentElement.lang = lang;
       document.querySelectorAll("[data-lang-key]").forEach((element) => {
-        const key = element.getAttribute("data-lang-key");
-        element.textContent = translations[lang][key];
-        if (element.tagName.toLowerCase() === "title") {
-          document.title = translations[lang][key];
-        }
+      const key = element.getAttribute("data-lang-key");
+      element.textContent = translations[lang][key];
+      if (element.tagName.toLowerCase() === "title") {
+        document.title = translations[lang][key];
+      }
       });
-      document.getElementById("lang-toggle").textContent =
-        translations[lang].langButton;
+      selectedLanguage.querySelector('.lang-text').textContent = lang.toUpperCase();
       setCookie("lang", lang);
     };
 
-    // Başlangıç dilini belirle
+
+    // Determine initial language (URL > Cookie > Browser language > Default)
+    // Başlangıç dilini belirleme (URL > Cookie > Tarayıcı dili > Varsayılan)
     const getInitialLang = () => {
-      // 1. URL'den dil parametresini kontrol et
+      // Check URL parameters / URL'den dil parametresini kontrol et
       const urlParams = new URLSearchParams(window.location.search);
       const urlLang = urlParams.get("lang");
       if (urlLang && ["tr", "en", "fr", "es", "de", "it"].includes(urlLang)) return urlLang;
 
-      // 2. Cookie'den kontrol et
+      // Check cookies / Cookie'den kontrol et
       const cookieLang = getCookie("lang");
       if (cookieLang) return cookieLang;
 
-      // 3. Tarayıcı dilini kontrol et
+      // Check browser language / Tarayıcı dilini kontrol et
       const browserLang = navigator.language.split("-")[0];
       return ["tr", "en", "fr", "es", "de", "it"].includes(browserLang) ? browserLang : "en";
     };
 
-    // Dil değiştirme butonu
-    const langToggle = document.getElementById("lang-toggle");
-    langToggle.addEventListener("click", () => {
-      const currentLang = document.documentElement.lang;
-      const newLang = currentLang === "tr" ? "en" :
-        currentLang === "en" ? "fr" :
-        currentLang === "fr" ? "es" :
-        currentLang === "es" ? "de" :
-        currentLang === "de" ? "it" : "tr";
-      // URL'yi güncelle
-      const url = new URL(window.location);
-      url.searchParams.set("lang", newLang);
-      window.history.pushState({}, "", url);
-      setLanguage(newLang);
+    // Language selector dropdown menu operations / Dil seçici dropdown menü işlemleri
+    const selectedLanguage = document.getElementById('selected-language');
+    const languageDropdown = document.getElementById('language-dropdown');
+    const langOptions = document.querySelectorAll('.lang-option');
+
+    // Toggle dropdown menu / Dropdown menüyü aç/kapat
+    selectedLanguage.addEventListener('click', () => {
+      languageDropdown.classList.toggle('show');
+      selectedLanguage.querySelector('.arrow').style.transform = 
+      languageDropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
     });
 
-    // Theme toggle functionality
+    // Close menu when clicking outside / Dışarı tıklandığında menüyü kapat
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.language-selector')) {
+      languageDropdown.classList.remove('show');
+      selectedLanguage.querySelector('.arrow').style.transform = 'rotate(0)';
+      }
+    });
+
+    langOptions.forEach(option => {
+      option.addEventListener('click', () => {
+      const lang = option.dataset.lang;
+      setLanguage(lang);
+      selectedLanguage.querySelector('.lang-text').textContent = lang.toUpperCase();
+      languageDropdown.classList.remove('show');
+      selectedLanguage.querySelector('.arrow').style.transform = 'rotate(0)';
+      
+        // Update URL / URL'yi güncelle
+      const url = new URL(window.location);
+      url.searchParams.set("lang", lang);
+      window.history.pushState({}, "", url);
+      });
+    });
+
+    // Theme change operations / Tema değiştirme işlemleri
     const themeToggle = document.getElementById("theme-toggle");
     const html = document.documentElement;
 
     const getInitialTheme = () => {
-      // 1. Önce cookie'yi kontrol et
+        // First check cookie / Önce cookie'yi kontrol et
       const cookieTheme = getCookie("theme");
       if (cookieTheme) return cookieTheme;
 
-      // 2. Cookie yoksa tarayıcı tercihine bak
+        // If no cookie, check browser preference / Cookie yoksa tarayıcı tercihine bak
       if (window.matchMedia("(prefers-color-scheme: light)").matches) {
         return "light";
       }
 
-      // 3. Varsayılan olarak dark kullan (HTML ile uyumlu)
+        // Use dark as default (compatible with HTML) / Varsayılan olarak dark kullan (HTML ile uyumlu)
       return "dark";
     };
 
-    // Başlangıç temasını ayarla
+    // Set initial theme / Başlangıç temasını ayarla
     const initialTheme = getInitialTheme();
     html.dataset.theme = initialTheme;
     themeToggle.textContent = initialTheme === "dark" ? "☀️" : "🌙";
@@ -268,7 +373,7 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
       themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
     });
 
-    // Başlangıç ayarları
+    // Apply initial settings when page loads / Sayfa yüklendiğinde başlangıç ayarlarını uygula
     const initialLang = getInitialLang();
     setLanguage(initialLang);
   </script>
