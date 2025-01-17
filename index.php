@@ -266,21 +266,21 @@ $googletag_id = "G-46GJVXYD2G";
     };
 
     // Helper functions for cookie management / Cookie yönetimi için yardımcı fonksiyonlar
-    const setCookie = (name, value, days = 365) => {
+    function setCookie(name, value, days = 365) {
       const date = new Date();
       date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
       document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
-    };
+    }
 
-    const getCookie = (name) => {
+    function getCookie(name) {
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${name}=`);
       if (parts.length === 2) return parts.pop().split(";").shift();
       return null;
-    };
+    }
 
     // Language change operations / Dil değiştirme işlemleri
-    const setLanguage = (lang) => {
+    function setLanguage(lang) {
       document.documentElement.lang = lang;
       document.querySelectorAll("[data-lang-key]").forEach((element) => {
         const key = element.getAttribute("data-lang-key");
@@ -291,12 +291,12 @@ $googletag_id = "G-46GJVXYD2G";
       });
       selectedLanguage.querySelector('.lang-text').textContent = lang.toUpperCase();
       setCookie("lang", lang);
-    };
+    }
 
 
     // Determine initial language (URL > Cookie > Browser language > Default)
     // Başlangıç dilini belirleme (URL > Cookie > Tarayıcı dili > Varsayılan)
-    const getInitialLang = () => {
+    function getInitialLang() {
       // Check URL parameters / URL'den dil parametresini kontrol et
       const urlParams = new URLSearchParams(window.location.search);
       const urlLang = urlParams.get("lang");
@@ -309,7 +309,28 @@ $googletag_id = "G-46GJVXYD2G";
       // Check browser language / Tarayıcı dilini kontrol et
       const browserLang = navigator.language.split("-")[0];
       return ["tr", "en", "fr", "es", "de", "it"].includes(browserLang) ? browserLang : "en";
-    };
+    }
+
+    // Theme change operations / Tema değiştirme işlemleri
+    function getInitialTheme() {
+      // First check cookie / Önce cookie'yi kontrol et
+      const cookieTheme = getCookie("theme");
+      if (cookieTheme) return cookieTheme;
+
+      // If no cookie, check browser preference / Cookie yoksa tarayıcı tercihine bak
+      if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+        return "light";
+      }
+
+      // Use dark as default (compatible with HTML) / Varsayılan olarak dark kullan (HTML ile uyumlu)
+      return "dark";
+    }
+
+    function setTheme(theme) {
+      html.dataset.theme = theme;
+      setCookie("theme", theme);
+      themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
+    }
 
     // Language selector dropdown menu operations / Dil seçici dropdown menü işlemleri
     const selectedLanguage = document.getElementById('selected-language');
@@ -350,19 +371,6 @@ $googletag_id = "G-46GJVXYD2G";
     const themeToggle = document.getElementById("theme-toggle");
     const html = document.documentElement;
 
-    const getInitialTheme = () => {
-      // First check cookie / Önce cookie'yi kontrol et
-      const cookieTheme = getCookie("theme");
-      if (cookieTheme) return cookieTheme;
-
-      // If no cookie, check browser preference / Cookie yoksa tarayıcı tercihine bak
-      if (window.matchMedia("(prefers-color-scheme: light)").matches) {
-        return "light";
-      }
-
-      // Use dark as default (compatible with HTML) / Varsayılan olarak dark kullan (HTML ile uyumlu)
-      return "dark";
-    };
 
     // Set initial theme / Başlangıç temasını ayarla
     const initialTheme = getInitialTheme();
@@ -371,16 +379,18 @@ $googletag_id = "G-46GJVXYD2G";
 
     themeToggle.addEventListener("click", () => {
       const currentTheme = html.dataset.theme;
-      const newTheme = currentTheme === "dark" ? "light" : "dark";
-
-      html.dataset.theme = newTheme;
-      setCookie("theme", newTheme);
-      themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
+      setTheme(currentTheme === "dark" ? "light" : "dark");
     });
 
     // Apply initial settings when page loads / Sayfa yüklendiğinde başlangıç ayarlarını uygula
-    const initialLang = getInitialLang();
-    setLanguage(initialLang);
+    function applyInitialSettings() {
+      const initialLang = getInitialLang();
+      setLanguage(initialLang);
+      const initialTheme = getInitialTheme();
+      setTheme(initialTheme);
+    }
+
+    applyInitialSettings();
   </script>
 </body>
 
