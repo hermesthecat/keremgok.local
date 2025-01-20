@@ -57,6 +57,10 @@ $googletag_id = "G-46GJVXYD2G";
     href="<?php echo $domain; ?>/?lang=en" />
   <link
     rel="alternate"
+    hreflang="ru"
+    href="<?php echo $domain; ?>/?lang=ru" />
+  <link
+    rel="alternate"
     hreflang="de"
     href="<?php echo $domain; ?>/?lang=de" />
   <link
@@ -213,6 +217,7 @@ $googletag_id = "G-46GJVXYD2G";
     <div class="language-dropdown" id="language-dropdown">
       <div class="lang-option" data-lang="tr">Türkçe</div>
       <div class="lang-option" data-lang="en">English</div>
+      <div class="lang-option" data-lang="ru">Русский</div>
       <div class="lang-option" data-lang="fr">Français</div>
       <div class="lang-option" data-lang="es">Español</div>
       <div class="lang-option" data-lang="de">Deutsch</div>
@@ -239,12 +244,17 @@ $googletag_id = "G-46GJVXYD2G";
       tr: {
         title: "a. kerem gök..",
         intro: "Bu sayfayı görüyorsanız, hayatınızdan yaklaşık 10 saniye boşa harcandı demektir.",
-        langButton: "EN",
+        langButton: "EN"
       },
       en: {
         title: "a. kerem gok..",
         intro: "If you are seeing this page, it means that approximately 10 seconds of your life have been wasted.",
-        langButton: "TR",
+        langButton: "TR"
+      },
+      ru: {
+        title: "a. kerem gok..",
+        intro: "Если вы видите эту страницу, значит примерно 10 секунд вашей жизни потрачены впустую.",
+        langButton: "RU"
       },
       fr: {
         title: "a. kerem gok..",
@@ -303,7 +313,7 @@ $googletag_id = "G-46GJVXYD2G";
       // Check URL parameters / URL'den dil parametresini kontrol et
       const urlParams = new URLSearchParams(window.location.search);
       const urlLang = urlParams.get("lang");
-      if (urlLang && ["tr", "en", "fr", "es", "de", "it"].includes(urlLang)) return urlLang;
+      if (urlLang && ["tr", "en", "ru", "fr", "es", "de", "it"].includes(urlLang)) return urlLang;
 
       // Check cookies / Cookie'den kontrol et
       const cookieLang = getCookie("lang");
@@ -311,7 +321,7 @@ $googletag_id = "G-46GJVXYD2G";
 
       // Check browser language / Tarayıcı dilini kontrol et
       const browserLang = navigator.language.split("-")[0];
-      return ["tr", "en", "fr", "es", "de", "it"].includes(browserLang) ? browserLang : "en";
+      return ["tr", "en", "ru", "fr", "es", "de", "it"].includes(browserLang) ? browserLang : "en";
     }
 
     // Theme change operations / Tema değiştirme işlemleri
