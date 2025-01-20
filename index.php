@@ -3,6 +3,8 @@
 // Dinamik domain URL'si oluştur (HTTP/HTTPS kontrolü ile)
 $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 
+// Social media links / Sosyal medya linkleri
+$blog_url = "https://blog.keremgok.tr";
 $twitter_username = "abdullahazad";
 $github_username = "hermesthecat";
 $googletag_id = "G-46GJVXYD2G";
@@ -226,6 +228,7 @@ $googletag_id = "G-46GJVXYD2G";
 
   <!-- Social media links / Sosyal medya linkleri -->
   <p>
+    <a href="<?php echo $blog_url; ?>">blog</a> •
     <a href="https://twitter.com/<?php echo $twitter_username; ?>">twitter</a> •
     <a href="https://github.com/<?php echo $github_username; ?>">github</a>
   </p>
