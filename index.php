@@ -61,6 +61,18 @@ $googletag_id = "G-46GJVXYD2G";
     href="<?php echo $domain; ?>/?lang=ru" />
   <link
     rel="alternate"
+    hreflang="ja"
+    href="<?php echo $domain; ?>/?lang=ja" />
+  <link
+    rel="alternate"
+    hreflang="zh"
+    href="<?php echo $domain; ?>/?lang=zh" />
+  <link
+    rel="alternate"
+    hreflang="ko"
+    href="<?php echo $domain; ?>/?lang=ko" />
+  <link
+    rel="alternate"
     hreflang="de"
     href="<?php echo $domain; ?>/?lang=de" />
   <link
@@ -218,9 +230,12 @@ $googletag_id = "G-46GJVXYD2G";
       <div class="lang-option" data-lang="tr">Türkçe</div>
       <div class="lang-option" data-lang="en">English</div>
       <div class="lang-option" data-lang="ru">Русский</div>
-      <div class="lang-option" data-lang="fr">Français</div>
-      <div class="lang-option" data-lang="es">Español</div>
+      <div class="lang-option" data-lang="ja">日本語</div>
+      <div class="lang-option" data-lang="zh">中文</div>
+      <div class="lang-option" data-lang="ko">한국어</div>
       <div class="lang-option" data-lang="de">Deutsch</div>
+      <div class="lang-option" data-lang="es">Español</div>
+      <div class="lang-option" data-lang="fr">Français</div>
       <div class="lang-option" data-lang="it">Italiano</div>
     </div>
   </div>
@@ -255,6 +270,21 @@ $googletag_id = "G-46GJVXYD2G";
         title: "a. kerem gok..",
         intro: "Если вы видите эту страницу, значит примерно 10 секунд вашей жизни потрачены впустую.",
         langButton: "RU"
+      },
+      ja: {
+        title: "a. kerem gok..",
+        intro: "このページを見ているということは、あなたの人生の約10秒が無駄になったということです。",
+        langButton: "JA"
+      },
+      zh: {
+        title: "a. kerem gok..",
+        intro: "如果您看到此页面，这意味着您的生命中大约有10秒被浪费了。",
+        langButton: "ZH"
+      },
+      ko: {
+        title: "a. kerem gok..",
+        intro: "이 페이지를 보고 계시다면, 귀하의 인생에서 약 10초가 낭비되었다는 의미입니다.",
+        langButton: "KO"
       },
       fr: {
         title: "a. kerem gok..",
@@ -313,7 +343,7 @@ $googletag_id = "G-46GJVXYD2G";
       // Check URL parameters / URL'den dil parametresini kontrol et
       const urlParams = new URLSearchParams(window.location.search);
       const urlLang = urlParams.get("lang");
-      if (urlLang && ["tr", "en", "ru", "fr", "es", "de", "it"].includes(urlLang)) return urlLang;
+      if (urlLang && ["tr", "en", "ru", "ja", "zh", "ko", "fr", "es", "de", "it"].includes(urlLang)) return urlLang;
 
       // Check cookies / Cookie'den kontrol et
       const cookieLang = getCookie("lang");
@@ -321,7 +351,7 @@ $googletag_id = "G-46GJVXYD2G";
 
       // Check browser language / Tarayıcı dilini kontrol et
       const browserLang = navigator.language.split("-")[0];
-      return ["tr", "en", "ru", "fr", "es", "de", "it"].includes(browserLang) ? browserLang : "en";
+      return ["tr", "en", "ru", "ja", "zh", "ko", "fr", "es", "de", "it"].includes(browserLang) ? browserLang : "en";
     }
 
     // Theme change operations / Tema değiştirme işlemleri
