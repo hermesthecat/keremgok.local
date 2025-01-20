@@ -5,7 +5,7 @@ $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST
 
 // Social media links / Sosyal medya linkleri
 $blog_url = "https://blog.keremgok.tr";
-$twitter_username = "abdullahazad";
+$twitter_username = "AKeremGok";
 $github_username = "hermesthecat";
 $googletag_id = "G-46GJVXYD2G";
 
