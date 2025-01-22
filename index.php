@@ -3,11 +3,48 @@
 // Dinamik domain URL'si oluştur (HTTP/HTTPS kontrolü ile)
 $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 
+// Read data from data.json
+$json_file = 'data.json';
+$data = [];
+if (file_exists($json_file)) {
+  $data = json_decode(file_get_contents($json_file), true);
+}
+
+// Get values with defaults
+function getValue($section, $key, $default = '')
+{
+  global $data;
+  return $data[$section][$key] ?? $default;
+}
+
 // Social media links / Sosyal medya linkleri
-$blog_url = "https://blog.keremgok.tr";
-$twitter_username = "AKeremGok";
-$github_username = "hermesthecat";
-$googletag_id = "G-46GJVXYD2G";
+$links = $data['links'] ?? [];
+
+// Twitter username'i bul
+$twitter_link = null;
+foreach ($links as $link) {
+  if (strtolower($link['name']) === 'twitter') {
+    $twitter_link = $link;
+    break;
+  }
+}
+$twitter_username = '';
+if ($twitter_link) {
+  // URL'den kullanıcı adını çıkar
+  preg_match('/twitter\.com\/([^\/]+)/', $twitter_link['url'], $matches);
+  if (isset($matches[1])) {
+    $twitter_username = $matches[1];
+  }
+}
+
+// Google Analytics ID'sini bul
+$googletag_id = '';
+foreach ($links as $link) {
+  if (strtolower($link['name']) === 'analytics') {
+    $googletag_id = $link['url'];
+    break;
+  }
+}
 
 ?>
 <!DOCTYPE html>
@@ -19,27 +56,23 @@ $googletag_id = "G-46GJVXYD2G";
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="A. Kerem Gök - Software Developer" />
-  <meta
-    name="keywords"
-    content="kerem gök, software developer, web developer, javascript, php" />
+  <meta name="keywords" content="kerem gök, software developer, web developer, javascript, php" />
   <meta name="author" content="A. Kerem Gök" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="<?php echo $domain; ?>/" />
   <meta property="og:title" content="A. Kerem Gök" />
-  <meta
-    property="og:description"
-    content="A. Kerem Gök - Software Developer" />
+  <meta property="og:description" content="A. Kerem Gök - Software Developer" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:url" content="<?php echo $domain; ?>/" />
   <meta name="twitter:title" content="A. Kerem Gök" />
-  <meta
-    name="twitter:description"
-    content="A. Kerem Gök - Software Developer" />
-  <meta name="twitter:creator" content="@<?php echo $twitter_username; ?>" />
+  <meta name="twitter:description" content="A. Kerem Gök - Software Developer" />
+  <?php if ($twitter_username): ?>
+    <meta name="twitter:creator" content="@<?php echo htmlspecialchars($twitter_username); ?>" />
+  <?php endif; ?>
 
   <!-- Robots -->
   <meta name="robots" content="index, follow" />
@@ -199,20 +232,21 @@ $googletag_id = "G-46GJVXYD2G";
     }
   </style>
 
-  <!-- Google tag (gtag.js) -->
-  <script
-    async
-    src="https://www.googletagmanager.com/gtag/js?id=<?php echo $googletag_id; ?>"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
+  <?php if ($googletag_id): ?>
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=<?php echo htmlspecialchars($googletag_id); ?>"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
 
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag("js", new Date());
-
-    gtag("config", "<?php echo $googletag_id; ?>");
-  </script>
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "<?php echo htmlspecialchars($googletag_id); ?>");
+    </script>
+  <?php endif; ?>
 
 </head>
 
@@ -248,9 +282,16 @@ $googletag_id = "G-46GJVXYD2G";
 
   <!-- Social media links / Sosyal medya linkleri -->
   <p>
-    <a href="<?php echo $blog_url; ?>">blog</a> •
-    <a href="https://twitter.com/<?php echo $twitter_username; ?>">twitter</a> •
-    <a href="https://github.com/<?php echo $github_username; ?>">github</a>
+    <?php
+    $first = true;
+    foreach ($links as $link) {
+      if (!$first) {
+        echo ' • ';
+      }
+      echo '<a href="' . htmlspecialchars($link['url']) . '">' . htmlspecialchars($link['name']) . '</a>';
+      $first = false;
+    }
+    ?>
   </p>
 
   <script>

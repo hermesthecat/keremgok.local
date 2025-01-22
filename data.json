@@ -1,0 +1,16 @@
+{
+    "links": {
+        "1": {
+            "name": "blog",
+            "url": "https:\/\/blog.keremgok.tr"
+        },
+        "2": {
+            "name": "twitter",
+            "url": "https:\/\/twitter.com\/AKeremGok"
+        },
+        "3": {
+            "name": "github",
+            "url": "https:\/\/github.com\/hermesthecat"
+        }
+    }
+}
