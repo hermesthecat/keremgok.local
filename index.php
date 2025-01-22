@@ -1,7 +1,74 @@
 <?php
+session_start(); // Dil seçimini saklamak için session kullanacağız
+
 // Create dynamic domain URL with HTTP/HTTPS check
 // Dinamik domain URL'si oluştur (HTTP/HTTPS kontrolü ile)
 $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+
+// Dil yönetimi için fonksiyonlar
+function loadTranslations()
+{
+  $lang_file = 'lang.json';
+  if (file_exists($lang_file)) {
+    return json_decode(file_get_contents($lang_file), true);
+  }
+  return [];
+}
+
+function getCurrentLang()
+{
+  $translations = loadTranslations();
+  $supported_languages = array_keys($translations);
+
+  // 1. URL'den dil kontrolü
+  if (isset($_GET['lang']) && in_array($_GET['lang'], $supported_languages)) {
+    $_SESSION['lang'] = $_GET['lang'];
+    return $_GET['lang'];
+  }
+
+  // 2. Session'dan dil kontrolü
+  if (isset($_SESSION['lang']) && in_array($_SESSION['lang'], $supported_languages)) {
+    return $_SESSION['lang'];
+  }
+
+  // 3. Tarayıcı dilini kontrol et
+  $browser_lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'en', 0, 2);
+  if (in_array($browser_lang, $supported_languages)) {
+    $_SESSION['lang'] = $browser_lang;
+    return $browser_lang;
+  }
+
+  // 4. Varsayılan dil
+  return 'en';
+}
+
+function translate($key)
+{
+  static $translations = null;
+  static $current_lang = null;
+
+  if ($translations === null) {
+    $translations = loadTranslations();
+    $current_lang = getCurrentLang();
+  }
+
+  return $translations[$current_lang][$key] ?? $key;
+}
+
+// Tema yönetimi
+$theme = isset($_COOKIE['theme']) ? $_COOKIE['theme'] : 'dark';
+if (isset($_GET['theme']) && in_array($_GET['theme'], ['light', 'dark'])) {
+  $theme = $_GET['theme'];
+  setcookie('theme', $theme, time() + (86400 * 365), "/");
+}
+
+// Mevcut dili al
+$current_lang = getCurrentLang();
+$translations = loadTranslations();
+$languages = [];
+foreach ($translations as $code => $trans) {
+  $languages[$code] = $trans['langText'] ?? $code;
+}
 
 // Read data from data.json
 $json_file = 'data.json';
@@ -46,32 +113,22 @@ foreach ($links as $link) {
   }
 }
 
-// Dil seçenekleri için gerekli verileri hazırla
-$lang_file = 'lang.json';
-$languages = [];
-if (file_exists($lang_file)) {
-    $lang_data = json_decode(file_get_contents($lang_file), true);
-    // Her dilin kendi dilindeki ismini al
-    foreach ($lang_data as $code => $translations) {
-        $languages[$code] = $translations['langText'] ?? $code;
-    }
-}
-
 // Language Alternatives bölümünü dinamik olarak oluştur
-function generateLanguageAlternatives($domain, $languages) {
-    foreach ($languages as $code => $name) {
-        echo '<link rel="alternate" hreflang="' . htmlspecialchars($code) . '" href="' . 
-             htmlspecialchars($domain) . '/?lang=' . htmlspecialchars($code) . '" />' . PHP_EOL;
-    }
+function generateLanguageAlternatives($domain, $languages)
+{
+  foreach ($languages as $code => $name) {
+    echo '<link rel="alternate" hreflang="' . htmlspecialchars($code) . '" href="' .
+      htmlspecialchars($domain) . '/?lang=' . htmlspecialchars($code) . '" />' . PHP_EOL;
+  }
 }
 
 ?>
 <!DOCTYPE html>
-<html data-theme="dark" lang="en">
+<html data-theme="<?php echo htmlspecialchars($theme); ?>" lang="<?php echo htmlspecialchars($current_lang); ?>">
 
 <head>
   <!-- Basic meta tags / Temel meta etiketleri -->
-  <title data-lang-key="title">a. kerem gok..</title>
+  <title><?php echo htmlspecialchars(translate('title')); ?></title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="A. Kerem Gök - Software Developer" />
@@ -231,183 +288,67 @@ function generateLanguageAlternatives($domain, $languages) {
 </head>
 
 <body>
-  <!-- Theme toggle button / Tema değiştirme butonu -->
-  <button id="theme-toggle">🌙</button>
+  <!-- Tema değiştirme butonu -->
+  <a href="?<?php
+            $params = $_GET;
+            $params['theme'] = ($theme === 'dark') ? 'light' : 'dark';
+            echo http_build_query($params);
+            ?>" id="theme-toggle" style="text-decoration: none;">
+    <?php echo $theme === 'dark' ? '☀️' : '🌙'; ?>
+  </a>
 
-  <!-- Language selector dropdown menu / Dil seçici dropdown menü -->
+  <!-- Dil seçici dropdown menü -->
   <div class="language-selector">
-    <div class="selected-language" id="selected-language">
-      <span class="lang-text">EN</span>
+    <div class="selected-language">
+      <span class="lang-text"><?php echo htmlspecialchars(strtoupper($current_lang)); ?></span>
       <span class="arrow">▼</span>
     </div>
-    <div class="language-dropdown" id="language-dropdown">
+    <div class="language-dropdown">
       <?php foreach ($languages as $code => $name): ?>
-        <div class="lang-option" data-lang="<?php echo htmlspecialchars($code); ?>"><?php echo htmlspecialchars($name); ?></div>
+        <a href="?<?php
+                  $params = $_GET;
+                  $params['lang'] = $code;
+                  echo http_build_query($params);
+                  ?>" class="lang-option">
+          <?php echo htmlspecialchars($name); ?>
+        </a>
       <?php endforeach; ?>
     </div>
   </div>
   <!-- Main content / Ana içerik -->
-  <h1 data-lang-key="title">a. kerem gök..</h1>
-  <p data-lang-key="intro">
-    If you are seeing this page, it means that approximately 10 seconds of
-    your life have been wasted.
-  </p>
+  <h1><?php echo htmlspecialchars(translate('title')); ?></h1>
+  <p><?php echo htmlspecialchars(translate('intro')); ?></p>
 
   <!-- Social media links / Sosyal medya linkleri -->
   <p>
     <?php
     $first = true;
     foreach ($links as $link) {
-      if (!$first) {
-        echo ' • ';
-      }
-      echo '<a href="' . htmlspecialchars($link['url']) . '">' . htmlspecialchars($link['name']) . '</a>';
+      if (!$first) echo ' • ';
+      echo '<a href="' . htmlspecialchars($link['url']) . '">' .
+        htmlspecialchars($link['name']) . '</a>';
       $first = false;
     }
     ?>
   </p>
 
+  <!-- Minimal JavaScript - sadece dropdown için -->
   <script>
-    // Load translations from lang.json / lang.json'dan çevirileri yükle
-    let translations = {};
-    let supportedLanguages = [];
-
-    fetch('lang.json')
-      .then(response => response.json())
-      .then(data => {
-        translations = data;
-        supportedLanguages = Object.keys(data);
-        applyInitialSettings();
-      });
-
-    // Helper functions for cookie management / Cookie yönetimi için yardımcı fonksiyonlar
-    function setCookie(name, value, days = 365) {
-      const date = new Date();
-      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-      document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
-    }
-
-    function getCookie(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(";").shift();
-      return null;
-    }
-
-    // Language change operations / Dil değiştirme işlemleri
-    function setLanguage(lang) {
-      if (!translations[lang]) return;
-      
-      document.documentElement.lang = lang;
-      document.querySelectorAll("[data-lang-key]").forEach((element) => {
-        const key = element.getAttribute("data-lang-key");
-        if (translations[lang][key]) {
-          element.textContent = translations[lang][key];
-          if (element.tagName.toLowerCase() === "title") {
-            document.title = translations[lang][key];
-          }
-        }
-      });
-      selectedLanguage.querySelector('.lang-text').textContent = lang.toUpperCase();
-      setCookie("lang", lang);
-    }
-
-    // Determine initial language (URL > Cookie > Browser language > Default)
-    // Başlangıç dilini belirleme (URL > Cookie > Tarayıcı dili > Varsayılan)
-    function getInitialLang() {
-      // Check URL parameters / URL'den dil parametresini kontrol et
-      const urlParams = new URLSearchParams(window.location.search);
-      const urlLang = urlParams.get("lang");
-      if (urlLang && supportedLanguages.includes(urlLang)) return urlLang;
-
-      // Check cookies / Cookie'den kontrol et
-      const cookieLang = getCookie("lang");
-      if (cookieLang && supportedLanguages.includes(cookieLang)) return cookieLang;
-
-      // Check browser language / Tarayıcı dilini kontrol et
-      const browserLang = navigator.language.split("-")[0];
-      return supportedLanguages.includes(browserLang) ? browserLang : "en";
-    }
-
-    // Theme change operations / Tema değiştirme işlemleri
-    function getInitialTheme() {
-      // First check cookie / Önce cookie'yi kontrol et
-      const cookieTheme = getCookie("theme");
-      if (cookieTheme) return cookieTheme;
-
-      // If no cookie, check browser preference / Cookie yoksa tarayıcı tercihine bak
-      if (window.matchMedia("(prefers-color-scheme: light)").matches) {
-        return "light";
-      }
-
-      // Use dark as default (compatible with HTML) / Varsayılan olarak dark kullan (HTML ile uyumlu)
-      return "dark";
-    }
-
-    function setTheme(theme) {
-      html.dataset.theme = theme;
-      setCookie("theme", theme);
-      themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
-    }
-
-    // Language selector dropdown menu operations / Dil seçici dropdown menü işlemleri
-    const selectedLanguage = document.getElementById('selected-language');
-    const languageDropdown = document.getElementById('language-dropdown');
-    const langOptions = document.querySelectorAll('.lang-option');
-
-    // Toggle dropdown menu / Dropdown menüyü aç/kapat
-    selectedLanguage.addEventListener('click', () => {
-      languageDropdown.classList.toggle('show');
-      selectedLanguage.querySelector('.arrow').style.transform =
-        languageDropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
+    // Dil seçici dropdown menüsü için basit toggle
+    document.querySelector('.selected-language').addEventListener('click', function() {
+      document.querySelector('.language-dropdown').classList.toggle('show');
+      document.querySelector('.arrow').style.transform =
+        document.querySelector('.language-dropdown').classList.contains('show') ?
+        'rotate(180deg)' : 'rotate(0)';
     });
 
-    // Close menu when clicking outside / Dışarı tıklandığında menüyü kapat
-    document.addEventListener('click', (e) => {
+    // Dışarı tıklandığında menüyü kapat
+    document.addEventListener('click', function(e) {
       if (!e.target.closest('.language-selector')) {
-        languageDropdown.classList.remove('show');
-        selectedLanguage.querySelector('.arrow').style.transform = 'rotate(0)';
+        document.querySelector('.language-dropdown').classList.remove('show');
+        document.querySelector('.arrow').style.transform = 'rotate(0)';
       }
     });
-
-    langOptions.forEach(option => {
-      option.addEventListener('click', () => {
-        const lang = option.dataset.lang;
-        setLanguage(lang);
-        selectedLanguage.querySelector('.lang-text').textContent = lang.toUpperCase();
-        languageDropdown.classList.remove('show');
-        selectedLanguage.querySelector('.arrow').style.transform = 'rotate(0)';
-
-        // Update URL / URL'yi güncelle
-        const url = new URL(window.location);
-        url.searchParams.set("lang", lang);
-        window.location.href = url;
-      });
-    });
-
-    // Theme change operations / Tema değiştirme işlemleri
-    const themeToggle = document.getElementById("theme-toggle");
-    const html = document.documentElement;
-
-    // Set initial theme / Başlangıç temasını ayarla
-    const initialTheme = getInitialTheme();
-    html.dataset.theme = initialTheme;
-    themeToggle.textContent = initialTheme === "dark" ? "☀️" : "🌙";
-
-    themeToggle.addEventListener("click", () => {
-      const currentTheme = html.dataset.theme;
-      setTheme(currentTheme === "dark" ? "light" : "dark");
-    });
-
-    // Apply initial settings when page loads / Sayfa yüklendiğinde başlangıç ayarlarını uygula
-    function applyInitialSettings() {
-      const initialLang = getInitialLang();
-      setLanguage(initialLang);
-      const initialTheme = getInitialTheme();
-      setTheme(initialTheme);
-    }
-
-    applyInitialSettings();
   </script>
 </body>
 
