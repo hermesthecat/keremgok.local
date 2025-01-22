@@ -207,17 +207,9 @@ function generateLanguageAlternatives($domain, $languages)
       transform: translateY(-1px);
     }
 
-    /* Language selector component styles */
-    .language-selector {
-      position: fixed;
-      top: 20px;
-      right: 85px;
-      z-index: 1000;
-    }
-
-    .selected-language {
+    /* Ortak buton özellikleri */
+    .top-button {
       height: 35px;
-      padding: 0 12px;
       border: 1px solid var(--text-color);
       border-radius: 4px;
       background-color: var(--bg-color);
@@ -228,7 +220,50 @@ function generateLanguageAlternatives($domain, $languages)
       font-size: 14px;
       display: flex;
       align-items: center;
-      min-width: 80px;
+      position: fixed;
+      top: 20px;
+      box-sizing: border-box;
+    }
+
+    .top-button:hover {
+      background-color: var(--text-color);
+      color: var(--bg-color);
+      transform: translateY(-1px);
+    }
+
+    /* Language selector component styles */
+    .language-selector {
+      height: 35px;
+      border: 1px solid var(--text-color);
+      border-radius: 4px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      position: fixed;
+      top: 20px;
+      right: 70px;
+      z-index: 1000;
+      width: 120px;
+      box-sizing: border-box;
+    }
+
+    .language-selector:hover {
+      background-color: var(--text-color);
+      color: var(--bg-color);
+      transform: translateY(-1px);
+    }
+
+    .selected-language {
+      padding: 0 12px;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
       justify-content: space-between;
       gap: 8px;
     }
@@ -244,7 +279,8 @@ function generateLanguageAlternatives($domain, $languages)
       overflow: hidden;
       display: none;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      min-width: 120px;
+      width: 100%;
+      box-sizing: border-box;
       opacity: 0;
       transform: translateY(-10px);
       transition: opacity 0.2s ease, transform 0.2s ease;
@@ -282,7 +318,6 @@ function generateLanguageAlternatives($domain, $languages)
     /* Tema değiştirme butonu */
     #theme-toggle {
       height: 35px;
-      padding: 0 12px;
       border: 1px solid var(--text-color);
       border-radius: 4px;
       background-color: var(--bg-color);
@@ -299,6 +334,14 @@ function generateLanguageAlternatives($domain, $languages)
       right: 20px;
       text-decoration: none;
       width: 35px;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    #theme-toggle:hover {
+      background-color: var(--text-color);
+      color: var(--bg-color);
+      transform: translateY(-1px);
     }
 
     .lang-text {
@@ -345,7 +388,7 @@ function generateLanguageAlternatives($domain, $languages)
   <!-- Dil seçici dropdown menü -->
   <div class="language-selector">
     <div class="selected-language">
-      <span class="lang-text"><?php echo htmlspecialchars(strtoupper($current_lang)); ?></span>
+      <span class="lang-text"><?php echo htmlspecialchars($languages[$current_lang]); ?></span>
       <span class="arrow">▼</span>
     </div>
     <div class="language-dropdown">
