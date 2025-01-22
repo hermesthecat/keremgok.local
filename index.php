@@ -295,59 +295,14 @@ foreach ($links as $link) {
   </p>
 
   <script>
-    // Translations for multilingual support / Çoklu dil desteği için çeviriler
-    const translations = {
-      tr: {
-        title: "a. kerem gök..",
-        intro: "Bu sayfayı görüyorsanız, hayatınızdan yaklaşık 10 saniye boşa harcandı demektir.",
-        langButton: "EN"
-      },
-      en: {
-        title: "a. kerem gok..",
-        intro: "If you are seeing this page, it means that approximately 10 seconds of your life have been wasted.",
-        langButton: "TR"
-      },
-      ru: {
-        title: "a. kerem gok..",
-        intro: "Если вы видите эту страницу, значит примерно 10 секунд вашей жизни потрачены впустую.",
-        langButton: "RU"
-      },
-      ja: {
-        title: "a. kerem gok..",
-        intro: "このページを見ているということは、あなたの人生の約10秒が無駄になったということです。",
-        langButton: "JA"
-      },
-      zh: {
-        title: "a. kerem gok..",
-        intro: "如果您看到此页面，这意味着您的生命中大约有10秒被浪费了。",
-        langButton: "ZH"
-      },
-      ko: {
-        title: "a. kerem gok..",
-        intro: "이 페이지를 보고 계시다면, 귀하의 인생에서 약 10초가 낭비되었다는 의미입니다.",
-        langButton: "KO"
-      },
-      fr: {
-        title: "a. kerem gok..",
-        intro: "Si vous voyez cette page, cela signifie qu'environ 10 secondes de votre vie ont été gaspillées.",
-        langButton: "FR",
-      },
-      es: {
-        title: "a. kerem gok..",
-        intro: "Si ves esta página, significa que aproximadamente 10 segundos de tu vida han sido desperdiciados.",
-        langButton: "ES",
-      },
-      de: {
-        title: "a. kerem gok..",
-        intro: "Wenn Sie diese Seite sehen, bedeutet das, dass etwa 10 Sekunden Ihres Lebens verschwendet wurden.",
-        langButton: "DE",
-      },
-      it: {
-        title: "a. kerem gok..",
-        intro: "Se stai vedendo questa pagina, significa che circa 10 secondi della tua vita sono stati sprecati.",
-        langButton: "IT",
-      },
-    };
+    // Load translations from lang.json / lang.json'dan çevirileri yükle
+    let translations = {};
+    fetch('lang.json')
+      .then(response => response.json())
+      .then(data => {
+        translations = data;
+        applyInitialSettings();
+      });
 
     // Helper functions for cookie management / Cookie yönetimi için yardımcı fonksiyonlar
     function setCookie(name, value, days = 365) {
@@ -365,18 +320,21 @@ foreach ($links as $link) {
 
     // Language change operations / Dil değiştirme işlemleri
     function setLanguage(lang) {
+      if (!translations[lang]) return;
+      
       document.documentElement.lang = lang;
       document.querySelectorAll("[data-lang-key]").forEach((element) => {
         const key = element.getAttribute("data-lang-key");
-        element.textContent = translations[lang][key];
-        if (element.tagName.toLowerCase() === "title") {
-          document.title = translations[lang][key];
+        if (translations[lang][key]) {
+          element.textContent = translations[lang][key];
+          if (element.tagName.toLowerCase() === "title") {
+            document.title = translations[lang][key];
+          }
         }
       });
       selectedLanguage.querySelector('.lang-text').textContent = lang.toUpperCase();
       setCookie("lang", lang);
     }
-
 
     // Determine initial language (URL > Cookie > Browser language > Default)
     // Başlangıç dilini belirleme (URL > Cookie > Tarayıcı dili > Varsayılan)
@@ -454,7 +412,6 @@ foreach ($links as $link) {
     // Theme change operations / Tema değiştirme işlemleri
     const themeToggle = document.getElementById("theme-toggle");
     const html = document.documentElement;
-
 
     // Set initial theme / Başlangıç temasını ayarla
     const initialTheme = getInitialTheme();
