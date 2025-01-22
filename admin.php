@@ -106,6 +106,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['api'])) {
     // Process API actions / API işlemlerini işle
     if (isset($input['action'])) {
         switch ($input['action']) {
+            case 'updateAnalytics':
+                // Update Analytics ID / Analytics ID'yi güncelle
+                $data['analytics'] = [
+                    'name' => 'analytics',
+                    'url' => $input['analyticsId']
+                ];
+                break;
+
             case 'add':
                 // Find new ID / Yeni ID bul
                 $maxId = 0;
@@ -162,6 +170,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['api'])) {
     <div class="container">
         <h1>Link Yönetimi</h1>
 
+        <!-- Google Analytics Settings / Google Analytics Ayarları -->
+        <div class="form-group">
+            <h2>Google Analytics Ayarları</h2>
+            <label for="analyticsId">Analytics ID:</label>
+            <input type="text" id="analyticsId" placeholder="Örnek: G-XXXXXXXXXX" value="<?php echo $data['analytics']['url'] ?? ''; ?>">
+            <button onclick="updateAnalytics()">Analytics ID Güncelle</button>
+        </div>
+
         <!-- Add new link form / Yeni link ekleme formu -->
         <div class="form-group">
             <h2>Yeni Link Ekle</h2>
@@ -198,6 +214,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['api'])) {
 
     <!-- Include JavaScript file / JavaScript dosyasını dahil et -->
     <script src="admin.js"></script>
+
+    <script>
+    // Update Analytics ID / Analytics ID'yi güncelle
+    function updateAnalytics() {
+        const analyticsId = document.getElementById("analyticsId").value;
+
+        if (!analyticsId) {
+            alert("Lütfen Analytics ID giriniz!");
+            return;
+        }
+
+        // Send update request / Güncelleme isteği gönder
+        fetch("admin.php?api=1", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                action: "updateAnalytics",
+                analyticsId: analyticsId
+            }),
+        })
+        .then((response) => response.json())
+        .then((result) => {
+            if (result.success) {
+                alert("Analytics ID başarıyla güncellendi!");
+            }
+        });
+    }
+    </script>
 </body>
 
 </html>

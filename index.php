@@ -167,13 +167,7 @@ if ($twitter_link) {
 }
 
 // Find Google Analytics ID / Google Analytics ID'sini bul
-$googletag_id = '';
-foreach ($links as $link) {
-  if (strtolower($link['name']) === 'analytics') {
-    $googletag_id = $link['url'];
-    break;
-  }
-}
+$googletag_id = $data['analytics']['url'] ?? '';
 
 /**
  * Generates language alternatives for SEO
