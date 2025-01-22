@@ -1,11 +1,49 @@
 <?php
-session_start(); // Dil seçimini saklamak için session kullanacağız
+
+/**
+ * Personal Website Main Page
+ * Kişisel Web Sitesi Ana Sayfası
+ * 
+ * This file serves as the main entry point for the personal website.
+ * Bu dosya, kişisel web sitesinin ana giriş noktasıdır.
+ * 
+ * Features:
+ * - Multi-language support
+ * - Theme switching (dark/light)
+ * - Dynamic link management
+ * - SEO optimization
+ * - Social media integration
+ * - Google Analytics integration
+ * 
+ * Özellikler:
+ * - Çoklu dil desteği
+ * - Tema değiştirme (koyu/açık)
+ * - Dinamik link yönetimi
+ * - SEO optimizasyonu
+ * - Sosyal medya entegrasyonu
+ * - Google Analytics entegrasyonu
+ * 
+ * @author A. Kerem Gök
+ * @version 1.0
+ */
+
+session_start(); // Start session for language preference / Dil tercihi için oturum başlat
 
 // Create dynamic domain URL with HTTP/HTTPS check
 // Dinamik domain URL'si oluştur (HTTP/HTTPS kontrolü ile)
 $domain = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 
-// Dil yönetimi için fonksiyonlar
+/**
+ * Language Management Functions
+ * Dil Yönetimi Fonksiyonları
+ */
+
+/**
+ * Loads translations from lang.json
+ * lang.json dosyasından çevirileri yükler
+ * 
+ * @return array Translation data / Çeviri verileri
+ */
 function loadTranslations()
 {
   $lang_file = 'lang.json';
@@ -15,33 +53,49 @@ function loadTranslations()
   return [];
 }
 
+/**
+ * Determines the current language
+ * Mevcut dili belirler
+ * 
+ * Priority order: URL > Session > Browser Language > Default (en)
+ * Öncelik sırası: URL > Session > Tarayıcı Dili > Varsayılan (en)
+ * 
+ * @return string Language code (e.g., 'tr', 'en') / Dil kodu (örn: 'tr', 'en')
+ */
 function getCurrentLang()
 {
   $translations = loadTranslations();
   $supported_languages = array_keys($translations);
 
-  // 1. URL'den dil kontrolü
+  // 1. Check URL parameter / URL parametresini kontrol et
   if (isset($_GET['lang']) && in_array($_GET['lang'], $supported_languages)) {
     $_SESSION['lang'] = $_GET['lang'];
     return $_GET['lang'];
   }
 
-  // 2. Session'dan dil kontrolü
+  // 2. Check session / Session'ı kontrol et
   if (isset($_SESSION['lang']) && in_array($_SESSION['lang'], $supported_languages)) {
     return $_SESSION['lang'];
   }
 
-  // 3. Tarayıcı dilini kontrol et
+  // 3. Check browser language / Tarayıcı dilini kontrol et
   $browser_lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'en', 0, 2);
   if (in_array($browser_lang, $supported_languages)) {
     $_SESSION['lang'] = $browser_lang;
     return $browser_lang;
   }
 
-  // 4. Varsayılan dil
+  // 4. Default language / Varsayılan dil
   return 'en';
 }
 
+/**
+ * Returns translated text for given key
+ * Verilen anahtar için çevrilmiş metni döndürür
+ * 
+ * @param string $key Translation key / Çeviri anahtarı
+ * @return string Translated text / Çevrilmiş metin
+ */
 function translate($key)
 {
   static $translations = null;
@@ -55,14 +109,14 @@ function translate($key)
   return $translations[$current_lang][$key] ?? $key;
 }
 
-// Tema yönetimi
+// Theme management - stored in cookie / Tema yönetimi - cookie'de saklanır
 $theme = isset($_COOKIE['theme']) ? $_COOKIE['theme'] : 'dark';
 if (isset($_GET['theme']) && in_array($_GET['theme'], ['light', 'dark'])) {
   $theme = $_GET['theme'];
-  setcookie('theme', $theme, time() + (86400 * 365), "/");
+  setcookie('theme', $theme, time() + (86400 * 365), "/"); // Valid for 1 year / 1 yıl geçerli
 }
 
-// Mevcut dili al
+// Get current language and translations / Mevcut dili ve çevirileri al
 $current_lang = getCurrentLang();
 $translations = loadTranslations();
 $languages = [];
@@ -70,14 +124,22 @@ foreach ($translations as $code => $trans) {
   $languages[$code] = $trans['langText'] ?? $code;
 }
 
-// Read data from data.json
+// Read data from data.json / data.json'dan verileri oku
 $json_file = 'data.json';
 $data = [];
 if (file_exists($json_file)) {
   $data = json_decode(file_get_contents($json_file), true);
 }
 
-// Get values with defaults
+/**
+ * Reads value from data.json, returns default if not found
+ * data.json'dan değer okur, yoksa varsayılan değeri döndürür
+ * 
+ * @param string $section Section name / Bölüm adı
+ * @param string $key Key / Anahtar
+ * @param mixed $default Default value / Varsayılan değer
+ * @return mixed Read value / Okunan değer
+ */
 function getValue($section, $key, $default = '')
 {
   global $data;
@@ -87,7 +149,7 @@ function getValue($section, $key, $default = '')
 // Social media links / Sosyal medya linkleri
 $links = $data['links'] ?? [];
 
-// Twitter username'i bul
+// Find Twitter username / Twitter kullanıcı adını bul
 $twitter_link = null;
 foreach ($links as $link) {
   if (strtolower($link['name']) === 'twitter') {
@@ -97,14 +159,14 @@ foreach ($links as $link) {
 }
 $twitter_username = '';
 if ($twitter_link) {
-  // URL'den kullanıcı adını çıkar
+  // Extract username from URL / URL'den kullanıcı adını çıkar
   preg_match('/twitter\.com\/([^\/]+)/', $twitter_link['url'], $matches);
   if (isset($matches[1])) {
     $twitter_username = $matches[1];
   }
 }
 
-// Google Analytics ID'sini bul
+// Find Google Analytics ID / Google Analytics ID'sini bul
 $googletag_id = '';
 foreach ($links as $link) {
   if (strtolower($link['name']) === 'analytics') {
@@ -113,7 +175,13 @@ foreach ($links as $link) {
   }
 }
 
-// Language Alternatives bölümünü dinamik olarak oluştur
+/**
+ * Generates language alternatives for SEO
+ * SEO için dil alternatiflerini oluşturur
+ * 
+ * @param string $domain Site domain / Site domaini
+ * @param array $languages Language list / Dil listesi
+ */
 function generateLanguageAlternatives($domain, $languages)
 {
   foreach ($languages as $code => $name) {
@@ -121,7 +189,6 @@ function generateLanguageAlternatives($domain, $languages)
       htmlspecialchars($domain) . '/?lang=' . htmlspecialchars($code) . '" />' . PHP_EOL;
   }
 }
-
 ?>
 <!DOCTYPE html>
 <html data-theme="<?php echo htmlspecialchars($theme); ?>" lang="<?php echo htmlspecialchars($current_lang); ?>">
@@ -135,13 +202,13 @@ function generateLanguageAlternatives($domain, $languages)
   <meta name="keywords" content="kerem gök, software developer, web developer, javascript, php" />
   <meta name="author" content="A. Kerem Gök" />
 
-  <!-- Open Graph / Facebook -->
+  <!-- Open Graph / Facebook meta tags -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="<?php echo $domain; ?>/" />
   <meta property="og:title" content="A. Kerem Gök" />
   <meta property="og:description" content="A. Kerem Gök - Software Developer" />
 
-  <!-- Twitter -->
+  <!-- Twitter meta tags -->
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:url" content="<?php echo $domain; ?>/" />
   <meta name="twitter:title" content="A. Kerem Gök" />
@@ -150,218 +217,19 @@ function generateLanguageAlternatives($domain, $languages)
     <meta name="twitter:creator" content="@<?php echo htmlspecialchars($twitter_username); ?>" />
   <?php endif; ?>
 
-  <!-- Robots -->
+  <!-- SEO meta tags -->
   <meta name="robots" content="index, follow" />
-
   <link rel="canonical" href="<?php echo $domain; ?>/" />
 
-  <!-- Language Alternatives / Dil Alternatifleri -->
+  <!-- Language alternatives / Dil alternatifleri -->
   <?php generateLanguageAlternatives($domain, $languages); ?>
 
-  <style>
-    /* Theme color variables / Tema renk değişkenleri */
-    :root[data-theme="light"] {
-      --bg-color: #ffffff;
-      --text-color: #000000;
-    }
-
-    :root[data-theme="dark"] {
-      --bg-color: #1a1a1a;
-      --text-color: #ffffff;
-    }
-
-    /* Basic style definitions / Temel stil tanımlamaları */
-    html {
-      color-scheme: light dark;
-    }
-
-    /* Main content container style / Ana içerik container stili */
-    body {
-      width: 35em;
-      margin: 0 auto;
-      font-family: Tahoma, Verdana, Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    /* Ortak kontrol stilleri */
-    .top-control {
-      height: 35px;
-      padding: 0 12px;
-      border: 1px solid var(--text-color);
-      border-radius: 4px;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-    }
-
-    .top-control:hover {
-      background-color: var(--text-color);
-      color: var(--bg-color);
-      transform: translateY(-1px);
-    }
-
-    /* Ortak buton özellikleri */
-    .top-button {
-      height: 35px;
-      border: 1px solid var(--text-color);
-      border-radius: 4px;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      position: fixed;
-      top: 20px;
-      box-sizing: border-box;
-    }
-
-    .top-button:hover {
-      background-color: var(--text-color);
-      color: var(--bg-color);
-      transform: translateY(-1px);
-    }
-
-    /* Language selector component styles */
-    .language-selector {
-      height: 35px;
-      border: 1px solid var(--text-color);
-      border-radius: 4px;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      position: fixed;
-      top: 20px;
-      right: 70px;
-      z-index: 1000;
-      width: 120px;
-      box-sizing: border-box;
-    }
-
-    .language-selector:hover {
-      background-color: var(--text-color);
-      color: var(--bg-color);
-      transform: translateY(-1px);
-    }
-
-    .selected-language {
-      padding: 0 12px;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .language-dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 4px;
-      background-color: var(--bg-color);
-      border: 1px solid var(--text-color);
-      border-radius: 4px;
-      overflow: hidden;
-      display: none;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      box-sizing: border-box;
-      opacity: 0;
-      transform: translateY(-10px);
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
-
-    .language-dropdown.show {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .arrow {
-      font-size: 8px;
-      transition: transform 0.3s ease;
-      display: inline-block;
-    }
-
-    .lang-option {
-      display: block;
-      padding: 10px 16px;
-      color: var(--text-color);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-      text-decoration: none;
-      border-bottom: 1px solid var(--text-color);
-    }
-
-    .lang-option:hover {
-      background-color: var(--text-color);
-      color: var(--bg-color);
-      padding-left: 20px;
-    }
-
-    /* Tema değiştirme butonu */
-    #theme-toggle {
-      height: 35px;
-      border: 1px solid var(--text-color);
-      border-radius: 4px;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      text-decoration: none;
-      width: 35px;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    #theme-toggle:hover {
-      background-color: var(--text-color);
-      color: var(--bg-color);
-      transform: translateY(-1px);
-    }
-
-    .lang-text {
-      font-size: 14px;
-    }
-
-    a {
-      color: #0066cc;
-    }
-
-    :root[data-theme="dark"] a {
-      color: #66b3ff;
-    }
-  </style>
+  <!-- Styles / Stiller -->
+  <link rel="stylesheet" href="style.css">
 
   <?php if ($googletag_id): ?>
-    <!-- Google tag (gtag.js) -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=<?php echo htmlspecialchars($googletag_id); ?>"></script>
+    <!-- Google Analytics tracking code / Google Analytics takip kodu -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo htmlspecialchars($googletag_id); ?>"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
 
@@ -372,11 +240,10 @@ function generateLanguageAlternatives($domain, $languages)
       gtag("config", "<?php echo htmlspecialchars($googletag_id); ?>");
     </script>
   <?php endif; ?>
-
 </head>
 
 <body>
-  <!-- Tema değiştirme butonu -->
+  <!-- Theme toggle button / Tema değiştirme butonu -->
   <a href="?<?php
             $params = $_GET;
             $params['theme'] = ($theme === 'dark') ? 'light' : 'dark';
@@ -385,7 +252,7 @@ function generateLanguageAlternatives($domain, $languages)
     <?php echo $theme === 'dark' ? '☀️' : '🌙'; ?>
   </a>
 
-  <!-- Dil seçici dropdown menü -->
+  <!-- Language selector dropdown / Dil seçici açılır menü -->
   <div class="language-selector">
     <div class="selected-language">
       <span class="lang-text"><?php echo htmlspecialchars($languages[$current_lang]); ?></span>
@@ -403,6 +270,7 @@ function generateLanguageAlternatives($domain, $languages)
       <?php endforeach; ?>
     </div>
   </div>
+
   <!-- Main content / Ana içerik -->
   <h1><?php echo htmlspecialchars(translate('title')); ?></h1>
   <p><?php echo htmlspecialchars(translate('intro')); ?></p>
@@ -420,24 +288,8 @@ function generateLanguageAlternatives($domain, $languages)
     ?>
   </p>
 
-  <!-- Minimal JavaScript - sadece dropdown için -->
-  <script>
-    // Dil seçici dropdown menüsü için basit toggle
-    document.querySelector('.selected-language').addEventListener('click', function() {
-      document.querySelector('.language-dropdown').classList.toggle('show');
-      document.querySelector('.arrow').style.transform =
-        document.querySelector('.language-dropdown').classList.contains('show') ?
-        'rotate(180deg)' : 'rotate(0)';
-    });
-
-    // Dışarı tıklandığında menüyü kapat
-    document.addEventListener('click', function(e) {
-      if (!e.target.closest('.language-selector')) {
-        document.querySelector('.language-dropdown').classList.remove('show');
-        document.querySelector('.arrow').style.transform = 'rotate(0)';
-      }
-    });
-  </script>
+  <!-- JavaScript for dropdown functionality / Açılır menü için JavaScript -->
+  <script src="script.js"></script>
 </body>
 
 </html>
