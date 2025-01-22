@@ -185,51 +185,58 @@ function generateLanguageAlternatives($domain, $languages)
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    /* Theme toggle button style / Tema değiştirme butonu stili */
-    #theme-toggle {
-      position: fixed;
-      padding: 8px 16px;
+    /* Ortak stiller */
+    .top-controls {
+      height: 35px;
+      padding: 0 12px;
       border: none;
       border-radius: 4px;
       background-color: var(--text-color);
       color: var(--bg-color);
       cursor: pointer;
       transition: all 0.3s ease;
-      top: 20px;
-      right: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    #theme-toggle:hover {
+    .top-controls:hover {
       opacity: 0.8;
+      transform: translateY(-1px);
     }
 
     /* Language selector component styles / Dil seçici bileşeni stilleri */
     .language-selector {
       position: fixed;
       top: 20px;
-      right: 90px;
+      right: 85px;
       z-index: 1000;
     }
 
     .selected-language {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
+      height: 35px;
+      padding: 0 12px;
+      border: none;
+      border-radius: 4px;
       background-color: var(--text-color);
       color: var(--bg-color);
-      border-radius: 4px;
       cursor: pointer;
       transition: all 0.3s ease;
-    }
-
-    .selected-language:hover {
-      opacity: 0.8;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      min-width: 80px;
+      justify-content: space-between;
+      gap: 8px;
     }
 
     .arrow {
-      font-size: 10px;
+      font-size: 8px;
       transition: transform 0.3s ease;
+      display: inline-block;
     }
 
     .language-dropdown {
@@ -241,23 +248,71 @@ function generateLanguageAlternatives($domain, $languages)
       border-radius: 4px;
       overflow: hidden;
       display: none;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      min-width: 120px;
     }
 
     .language-dropdown.show {
       display: block;
+      animation: dropdownFade 0.2s ease;
+    }
+
+    @keyframes dropdownFade {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .lang-option {
-      padding: 8px 16px;
+      display: block;
+      padding: 10px 16px;
       color: var(--bg-color);
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: all 0.2s ease;
       white-space: nowrap;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .lang-option:last-child {
+      border-bottom: none;
     }
 
     .lang-option:hover {
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(255, 255, 255, 0.15);
+      padding-left: 20px;
+    }
+
+    /* Tema değiştirme butonu */
+    #theme-toggle {
+      height: 35px;
+      padding: 0 12px;
+      border: none;
+      border-radius: 4px;
+      background-color: var(--text-color);
+      color: var(--bg-color);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      text-decoration: none;
+      width: 35px;
+    }
+
+    .lang-text {
+      font-size: 14px;
     }
 
     a {
