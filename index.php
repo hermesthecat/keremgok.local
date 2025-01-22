@@ -185,29 +185,29 @@ function generateLanguageAlternatives($domain, $languages)
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    /* Ortak stiller */
-    .top-controls {
+    /* Ortak kontrol stilleri */
+    .top-control {
       height: 35px;
       padding: 0 12px;
-      border: none;
+      border: 1px solid var(--text-color);
       border-radius: 4px;
-      background-color: var(--text-color);
-      color: var(--bg-color);
+      background-color: var(--bg-color);
+      color: var(--text-color);
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       font-size: 14px;
       display: flex;
       align-items: center;
-      justify-content: center;
     }
 
-    .top-controls:hover {
-      opacity: 0.8;
+    .top-control:hover {
+      background-color: var(--text-color);
+      color: var(--bg-color);
       transform: translateY(-1px);
     }
 
-    /* Language selector component styles / Dil seçici bileşeni stilleri */
+    /* Language selector component styles */
     .language-selector {
       position: fixed;
       top: 20px;
@@ -218,13 +218,13 @@ function generateLanguageAlternatives($domain, $languages)
     .selected-language {
       height: 35px;
       padding: 0 12px;
-      border: none;
+      border: 1px solid var(--text-color);
       border-radius: 4px;
-      background-color: var(--text-color);
-      color: var(--bg-color);
+      background-color: var(--bg-color);
+      color: var(--text-color);
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       font-size: 14px;
       display: flex;
       align-items: center;
@@ -233,59 +233,49 @@ function generateLanguageAlternatives($domain, $languages)
       gap: 8px;
     }
 
+    .language-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 4px;
+      background-color: var(--bg-color);
+      border: 1px solid var(--text-color);
+      border-radius: 4px;
+      overflow: hidden;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      min-width: 120px;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .language-dropdown.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .arrow {
       font-size: 8px;
       transition: transform 0.3s ease;
       display: inline-block;
     }
 
-    .language-dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 4px;
-      background-color: var(--text-color);
-      border-radius: 4px;
-      overflow: hidden;
-      display: none;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      min-width: 120px;
-    }
-
-    .language-dropdown.show {
-      display: block;
-      animation: dropdownFade 0.2s ease;
-    }
-
-    @keyframes dropdownFade {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
     .lang-option {
       display: block;
       padding: 10px 16px;
-      color: var(--bg-color);
+      color: var(--text-color);
       cursor: pointer;
       transition: all 0.2s ease;
       white-space: nowrap;
       text-decoration: none;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .lang-option:last-child {
-      border-bottom: none;
+      border-bottom: 1px solid var(--text-color);
     }
 
     .lang-option:hover {
-      background-color: rgba(255, 255, 255, 0.15);
+      background-color: var(--text-color);
+      color: var(--bg-color);
       padding-left: 20px;
     }
 
@@ -293,13 +283,13 @@ function generateLanguageAlternatives($domain, $languages)
     #theme-toggle {
       height: 35px;
       padding: 0 12px;
-      border: none;
+      border: 1px solid var(--text-color);
       border-radius: 4px;
-      background-color: var(--text-color);
-      color: var(--bg-color);
+      background-color: var(--bg-color);
+      color: var(--text-color);
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       font-size: 14px;
       display: flex;
       align-items: center;
