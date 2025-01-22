@@ -178,6 +178,7 @@ $googletag_id = $data['analytics']['url'] ?? '';
  */
 function generateLanguageAlternatives($domain, $languages)
 {
+  echo '<link rel="alternate" hreflang="x-default" href="' . htmlspecialchars($domain) . '" />' . PHP_EOL;
   foreach ($languages as $code => $name) {
     echo '<link rel="alternate" hreflang="' . htmlspecialchars($code) . '" href="' .
       htmlspecialchars($domain) . '/?lang=' . htmlspecialchars($code) . '" />' . PHP_EOL;
