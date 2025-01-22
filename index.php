@@ -46,6 +46,25 @@ foreach ($links as $link) {
   }
 }
 
+// Dil seçenekleri için gerekli verileri hazırla
+$lang_file = 'lang.json';
+$languages = [];
+if (file_exists($lang_file)) {
+    $lang_data = json_decode(file_get_contents($lang_file), true);
+    // Her dilin kendi dilindeki ismini al
+    foreach ($lang_data as $code => $translations) {
+        $languages[$code] = $translations['langText'] ?? $code;
+    }
+}
+
+// Language Alternatives bölümünü dinamik olarak oluştur
+function generateLanguageAlternatives($domain, $languages) {
+    foreach ($languages as $code => $name) {
+        echo '<link rel="alternate" hreflang="' . htmlspecialchars($code) . '" href="' . 
+             htmlspecialchars($domain) . '/?lang=' . htmlspecialchars($code) . '" />' . PHP_EOL;
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html data-theme="dark" lang="en">
@@ -80,46 +99,7 @@ foreach ($links as $link) {
   <link rel="canonical" href="<?php echo $domain; ?>/" />
 
   <!-- Language Alternatives / Dil Alternatifleri -->
-  <link
-    rel="alternate"
-    hreflang="tr"
-    href="<?php echo $domain; ?>/?lang=tr" />
-  <link
-    rel="alternate"
-    hreflang="en"
-    href="<?php echo $domain; ?>/?lang=en" />
-  <link
-    rel="alternate"
-    hreflang="ru"
-    href="<?php echo $domain; ?>/?lang=ru" />
-  <link
-    rel="alternate"
-    hreflang="ja"
-    href="<?php echo $domain; ?>/?lang=ja" />
-  <link
-    rel="alternate"
-    hreflang="zh"
-    href="<?php echo $domain; ?>/?lang=zh" />
-  <link
-    rel="alternate"
-    hreflang="ko"
-    href="<?php echo $domain; ?>/?lang=ko" />
-  <link
-    rel="alternate"
-    hreflang="de"
-    href="<?php echo $domain; ?>/?lang=de" />
-  <link
-    rel="alternate"
-    hreflang="es"
-    href="<?php echo $domain; ?>/?lang=es" />
-  <link
-    rel="alternate"
-    hreflang="fr"
-    href="<?php echo $domain; ?>/?lang=fr" />
-  <link
-    rel="alternate"
-    hreflang="it"
-    href="<?php echo $domain; ?>/?lang=it" />
+  <?php generateLanguageAlternatives($domain, $languages); ?>
 
   <style>
     /* Theme color variables / Tema renk değişkenleri */
@@ -261,16 +241,9 @@ foreach ($links as $link) {
       <span class="arrow">▼</span>
     </div>
     <div class="language-dropdown" id="language-dropdown">
-      <div class="lang-option" data-lang="tr">Türkçe</div>
-      <div class="lang-option" data-lang="en">English</div>
-      <div class="lang-option" data-lang="ru">Русский</div>
-      <div class="lang-option" data-lang="ja">日本語</div>
-      <div class="lang-option" data-lang="zh">中文</div>
-      <div class="lang-option" data-lang="ko">한국어</div>
-      <div class="lang-option" data-lang="de">Deutsch</div>
-      <div class="lang-option" data-lang="es">Español</div>
-      <div class="lang-option" data-lang="fr">Français</div>
-      <div class="lang-option" data-lang="it">Italiano</div>
+      <?php foreach ($languages as $code => $name): ?>
+        <div class="lang-option" data-lang="<?php echo htmlspecialchars($code); ?>"><?php echo htmlspecialchars($name); ?></div>
+      <?php endforeach; ?>
     </div>
   </div>
   <!-- Main content / Ana içerik -->
@@ -297,10 +270,13 @@ foreach ($links as $link) {
   <script>
     // Load translations from lang.json / lang.json'dan çevirileri yükle
     let translations = {};
+    let supportedLanguages = [];
+
     fetch('lang.json')
       .then(response => response.json())
       .then(data => {
         translations = data;
+        supportedLanguages = Object.keys(data);
         applyInitialSettings();
       });
 
@@ -342,15 +318,15 @@ foreach ($links as $link) {
       // Check URL parameters / URL'den dil parametresini kontrol et
       const urlParams = new URLSearchParams(window.location.search);
       const urlLang = urlParams.get("lang");
-      if (urlLang && ["tr", "en", "ru", "ja", "zh", "ko", "fr", "es", "de", "it"].includes(urlLang)) return urlLang;
+      if (urlLang && supportedLanguages.includes(urlLang)) return urlLang;
 
       // Check cookies / Cookie'den kontrol et
       const cookieLang = getCookie("lang");
-      if (cookieLang) return cookieLang;
+      if (cookieLang && supportedLanguages.includes(cookieLang)) return cookieLang;
 
       // Check browser language / Tarayıcı dilini kontrol et
       const browserLang = navigator.language.split("-")[0];
-      return ["tr", "en", "ru", "ja", "zh", "ko", "fr", "es", "de", "it"].includes(browserLang) ? browserLang : "en";
+      return supportedLanguages.includes(browserLang) ? browserLang : "en";
     }
 
     // Theme change operations / Tema değiştirme işlemleri
