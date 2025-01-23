@@ -44,6 +44,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'En az bir etiket ekleyin.';
     } else {
         try {
+            // Dosya yükleme işlemi
+            $uploadedFiles = [];
+            if (!empty($_FILES['files']['name'][0])) {
+                if (!file_exists(UPLOAD_DIR)) {
+                    mkdir(UPLOAD_DIR, 0777, true);
+                }
+
+                foreach ($_FILES['files']['tmp_name'] as $key => $tmp_name) {
+                    $file = [
+                        'name' => $_FILES['files']['name'][$key],
+                        'type' => $_FILES['files']['type'][$key],
+                        'tmp_name' => $tmp_name,
+                        'error' => $_FILES['files']['error'][$key],
+                        'size' => $_FILES['files']['size'][$key]
+                    ];
+
+                    if (isValidUpload($file)) {
+                        $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                        $newFileName = uniqid() . '.' . $extension;
+                        $destination = UPLOAD_DIR . $newFileName;
+                        
+                        if (move_uploaded_file($file['tmp_name'], $destination)) {
+                            $uploadedFiles[] = $newFileName;
+                        }
+                    }
+                }
+            }
+
             // Dosya adını oluştur
             $slug = createSlug($title);
             $filename = $slug . '.md';
@@ -67,6 +95,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $markdown .= "date: " . date('Y-m-d') . "\n";
             $markdown .= "category: " . $category . "\n";
             $markdown .= "tags: [" . $tags . "]\n";
+            
+            // Yüklenen dosyaları içeriğe ekle
+            if (!empty($uploadedFiles)) {
+                $markdown .= "files: [" . implode(',', $uploadedFiles) . "]\n";
+            }
+            
             $markdown .= "---\n\n";
             $markdown .= $content;
             
@@ -162,6 +196,12 @@ $pageTitle = "Yeni Yazı - Blog";
                         </span>
                     <?php endforeach; ?>
                 </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="files">Dosya Yükle (Maksimum boyut: <?php echo MAX_FILE_SIZE / 1024 / 1024; ?>MB)</label>
+                <input type="file" id="files" name="files[]" multiple accept="<?php echo '.'.implode(',.', ALLOWED_EXTENSIONS); ?>">
+                <small class="file-info">İzin verilen dosya türleri: <?php echo implode(', ', ALLOWED_EXTENSIONS); ?></small>
             </div>
             
             <div class="form-group">
