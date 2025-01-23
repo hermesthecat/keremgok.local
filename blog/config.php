@@ -214,25 +214,49 @@ function parseMarkdown($content)
     // Resimleri güvenli şekilde işle
     $parsedown->setUrlsLinked(true);
     $parsedown->setMarkupEscaped(false);
-
+    
     // YAML front matter'ı ayır
     $parts = explode('---', $content);
     if (count($parts) >= 3) {
         $yaml = trim($parts[1]);
         $content = trim(implode('---', array_slice($parts, 2)));
-
+        
         // YAML verilerini parse et
         $metadata = parseYaml($yaml);
-
+        
+        // Markdown içeriğindeki resim URL'lerini düzelt
+        $content = preg_replace_callback(
+            '/!\[([^\]]*)\]\(([^)]+)\)/',
+            function($matches) {
+                $altText = $matches[1];
+                $url = $matches[2];
+                return '![' . $altText . '](' . fixImageUrl($url) . ')';
+            },
+            $content
+        );
+        
         // Markdown içeriğini HTML'e dönüştür
         $html = $parsedown->text($content);
-
+        
+        // HTML içindeki resim URL'lerini düzelt
+        $html = preg_replace_callback(
+            '/<img[^>]+src="([^"]+)"[^>]*>/',
+            function($matches) {
+                return str_replace(
+                    $matches[1],
+                    fixImageUrl($matches[1]),
+                    $matches[0]
+                );
+            },
+            $html
+        );
+        
         // Özet oluştur
         $excerpt = createExcerpt(strip_tags($html));
-
+        
         return array_merge($metadata, ['content' => $html, 'excerpt' => $excerpt]);
     }
-
+    
     // YAML front matter yoksa sadece içeriği dönüştür
     return ['content' => $parsedown->text($content)];
 }
