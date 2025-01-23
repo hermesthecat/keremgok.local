@@ -14,6 +14,7 @@ define('SITE_TITLE', 'Blog');
 define('POSTS_PER_PAGE', 10);
 define('EXCERPT_LENGTH', 200);
 define('POSTS_DIR', __DIR__ . '/posts/');
+define('AUTHOR_NAME', 'A. Kerem Gök');
 
 // Dosya yükleme ayarları
 define('UPLOAD_DIR', 'uploads/');
@@ -257,4 +258,30 @@ function isValidUpload($file) {
     }
     
     return true;
+}
+
+/**
+ * Başlıktan URL dostu slug oluştur
+ * @param string $text
+ * @return string
+ */
+function createSlug($text) {
+    // Türkçe karakterleri değiştir
+    $text = str_replace(
+        ['ı', 'ğ', 'ü', 'ş', 'ö', 'ç', 'İ', 'Ğ', 'Ü', 'Ş', 'Ö', 'Ç'],
+        ['i', 'g', 'u', 's', 'o', 'c', 'i', 'g', 'u', 's', 'o', 'c'],
+        $text
+    );
+    
+    // Küçük harfe çevir
+    $text = mb_strtolower($text);
+    
+    // Alfanumerik olmayan karakterleri tire ile değiştir
+    $text = preg_replace('/[^a-z0-9-]/', '-', $text);
+    
+    // Birden fazla tireyi tek tireye indir
+    $text = preg_replace('/-+/', '-', $text);
+    
+    // Baştaki ve sondaki tireleri kaldır
+    return trim($text, '-');
 } 

@@ -38,7 +38,10 @@ $parsedown->setSafeMode(true);
 
 <body>
     <main class="blog-container">
-        <h1>Blog Yazıları</h1>
+        <div class="blog-header">
+            <h1>Blog Yazıları</h1>
+            <a href="new-post.php" class="btn-primary">Yeni Yazı</a>
+        </div>
 
         <!-- Arama kutusu -->
         <div class="search-container">
