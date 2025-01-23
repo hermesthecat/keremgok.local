@@ -83,38 +83,55 @@ $pageTitle = $post['title'] . " - Blog";
             </div>
         </aside>
 
-        <article class="blog-post full-post">
-            <h1><?php echo htmlspecialchars($post['title']); ?></h1>
-
-            <div class="post-meta">
-                <span class="post-date"><?php echo date('d.m.Y', strtotime($post['created_at'])); ?></span>
-                <span class="post-author"><?php echo htmlspecialchars($post['author']); ?></span>
-                <?php if (isset($post['category'])): ?>
-                    <span class="post-category">
-                        <a href="index.php?category=<?php echo urlencode($post['category']); ?>">
-                            <?php echo htmlspecialchars($post['category']); ?>
-                        </a>
-                    </span>
-                <?php endif; ?>
+        <article class="blog-post">
+            <div class="post-header">
+                <h1><?php echo htmlspecialchars($post['title']); ?></h1>
+                <div class="post-meta">
+                    <span class="author">Yazar: <?php echo htmlspecialchars($post['author']); ?></span>
+                    <?php if (isset($post['category'])): ?>
+                        <span class="category">Kategori: <?php
+                                                            $categories = is_array($post['category']) ? $post['category'] : [$post['category']];
+                                                            foreach ($categories as $i => $category) {
+                                                                if ($i > 0) echo ', ';
+                                                                echo '<a href="index.php?category=' . urlencode($category) . '">' .
+                                                                    htmlspecialchars($category) . '</a>';
+                                                            }
+                                                            ?></span>
+                    <?php endif; ?>
+                    <?php if (!empty($post['tags'])): ?>
+                        <span class="tags">Etiketler: <?php
+                                                        foreach ($post['tags'] as $i => $tag) {
+                                                            if ($i > 0) echo ', ';
+                                                            echo '<a href="index.php?tag=' . urlencode($tag) . '">' .
+                                                                htmlspecialchars($tag) . '</a>';
+                                                        }
+                                                        ?></span>
+                    <?php endif; ?>
+                </div>
             </div>
 
-            <?php if (isset($post['tags']) && !empty($post['tags'])): ?>
-                <div class="post-tags">
-                    <?php foreach ($post['tags'] as $tag): ?>
-                        <a href="index.php?tag=<?php echo urlencode($tag); ?>" class="tag">
-                            <?php echo htmlspecialchars($tag); ?>
-                        </a>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-
             <div class="post-content">
-                <?php echo $post['content']; ?>
+                <?php
+                // Resimlerin URL'lerini düzelt
+                $content = $post['content'];
+                $content = preg_replace_callback(
+                    '/<img[^>]+src="([^"]+)"[^>]*>/',
+                    function ($matches) {
+                        return str_replace(
+                            $matches[1],
+                            fixImageUrl($matches[1]),
+                            $matches[0]
+                        );
+                    },
+                    $content
+                );
+                echo $content;
+                ?>
             </div>
 
             <div class="post-navigation">
-                <a href="index.php" class="back-to-blog">← Blog'a Dön</a>
-                <a href="edit-post.php?id=<?php echo $post['id']; ?>" class="edit-post">Düzenle</a>
+                <a href="index.php" class="btn-secondary">Blog'a Dön</a>
+                <a href="edit-post.php?id=<?php echo $postId; ?>" class="btn-primary">Düzenle</a>
             </div>
         </article>
     </main>

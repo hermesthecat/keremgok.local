@@ -190,6 +190,27 @@ $pageTitle = "Yeni Blog Yazısı";
             imageUploadEndpoint: 'new-post.php',
             imageMaxSize: <?php echo MAX_FILE_SIZE; ?>,
             imageAccept: '<?php echo '.' . implode(',.', ALLOWED_EXTENSIONS); ?>',
+            imageUploadFunction: function(file, onSuccess, onError) {
+                var formData = new FormData();
+                formData.append('image', file);
+
+                fetch('new-post.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            onSuccess(result.file.url);
+                        } else {
+                            onError(result.message || 'Dosya yüklenirken bir hata oluştu.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Yükleme hatası:', error);
+                        onError('Dosya yüklenirken bir hata oluştu.');
+                    });
+            },
             toolbar: [
                 'bold', 'italic', 'heading', 'strikethrough', '|',
                 'quote', 'code', 'unordered-list', 'ordered-list', '|',

@@ -179,64 +179,62 @@ function getBlogPosts($page = 1)
  * @param string $content
  * @return array
  */
-function parseMarkdown($content)
+function parseYaml($yaml)
 {
-    $lines = explode("\n", $content);
-    $post = [
-        'title' => '',
-        'author' => '',
-        'excerpt' => '',
-        'content' => '',
-        'category' => '',
-        'tags' => []
-    ];
-
-    // YAML front matter'ı parse et
-    $yamlStart = false;
-    $contentStart = false;
-    $contentLines = [];
+    $data = [];
+    $lines = explode("\n", $yaml);
 
     foreach ($lines as $line) {
-        if (trim($line) === '---') {
-            if (!$yamlStart) {
-                $yamlStart = true;
-                continue;
+        $line = trim($line);
+        if (empty($line)) continue;
+
+        // Key-value ayır
+        $parts = explode(':', $line, 2);
+        if (count($parts) === 2) {
+            $key = trim($parts[0]);
+            $value = trim($parts[1]);
+
+            // Etiketleri dizi olarak işle
+            if ($key === 'tags') {
+                $value = str_replace(['[', ']', ' '], '', $value);
+                $data[$key] = explode(',', $value);
             } else {
-                $contentStart = true;
-                continue;
+                $data[$key] = $value;
             }
-        }
-
-        if (!$contentStart && $yamlStart) {
-            $parts = explode(':', $line, 2);
-            if (count($parts) === 2) {
-                $key = trim($parts[0]);
-                $value = trim($parts[1]);
-
-                // Etiketleri dizi olarak işle
-                if ($key === 'tags') {
-                    $value = str_replace(['[', ']', ' '], '', $value);
-                    $post[$key] = explode(',', $value);
-                } else {
-                    $post[$key] = $value;
-                }
-            }
-        }
-
-        if ($contentStart) {
-            $contentLines[] = $line;
         }
     }
 
-    // Parsedown kullanarak içeriği HTML'e dönüştür
+    return $data;
+}
+
+function parseMarkdown($content)
+{
     $parsedown = new Parsedown();
     $parsedown->setSafeMode(true);
+    // Resimleri güvenli şekilde işle
+    $parsedown->setUrlsLinked(true);
+    $parsedown->setMarkupEscaped(false);
 
-    $content = implode("\n", $contentLines);
-    $post['content'] = $parsedown->text($content);
-    $post['excerpt'] = createExcerpt(strip_tags($post['content']));
+    // YAML front matter'ı ayır
+    $parts = explode('---', $content);
+    if (count($parts) >= 3) {
+        $yaml = trim($parts[1]);
+        $content = trim(implode('---', array_slice($parts, 2)));
 
-    return $post;
+        // YAML verilerini parse et
+        $metadata = parseYaml($yaml);
+
+        // Markdown içeriğini HTML'e dönüştür
+        $html = $parsedown->text($content);
+
+        // Özet oluştur
+        $excerpt = createExcerpt(strip_tags($html));
+
+        return array_merge($metadata, ['content' => $html, 'excerpt' => $excerpt]);
+    }
+
+    // YAML front matter yoksa sadece içeriği dönüştür
+    return ['content' => $parsedown->text($content)];
 }
 
 /**
@@ -301,4 +299,17 @@ function createSlug($text)
 
     // Baştaki ve sondaki tireleri kaldır
     return trim($text, '-');
+}
+
+// Resim URL'sini düzelt
+function fixImageUrl($url)
+{
+    // Eğer URL tam bir URL değilse (http:// veya https:// ile başlamıyorsa)
+    if (!preg_match('~^(?:f|ht)tps?://~i', $url)) {
+        // Başındaki slash'ı kaldır
+        $url = ltrim($url, '/');
+        // Domain'i ekle
+        return 'http://' . $_SERVER['HTTP_HOST'] . '/' . $url;
+    }
+    return $url;
 }

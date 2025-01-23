@@ -110,7 +110,9 @@ $parsedown->setSafeMode(true);
                         echo '</div>';
                     }
 
-                    echo '<div class="post-excerpt">' . $post['excerpt'] . '</div>';
+                    echo '<div class="post-content">';
+                    echo '<p>' . $post['excerpt'] . '</p>';
+                    echo '</div>';
                     echo '<div class="post-actions">';
                     echo '<a href="post.php?id=' . $post['id'] . '" class="read-more">Devamını Oku</a>';
                     echo '<a href="edit-post.php?id=' . $post['id'] . '" class="edit-post">Düzenle</a>';
