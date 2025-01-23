@@ -22,6 +22,10 @@ define('UPLOAD_DIR', 'uploads/');
 define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
 define('ALLOWED_EXTENSIONS', ['jpg', 'jpeg', 'png', 'gif']);
 
+// SEO ayarları
+define('SITE_DESCRIPTION', 'Kişisel blog sayfamda teknoloji, yazılım ve güncel konular hakkında yazılar paylaşıyorum.');
+define('SITE_KEYWORDS', 'blog, teknoloji, yazılım, php, web geliştirme');
+
 /**
  * Tüm kategorileri getir
  * @return array
@@ -336,4 +340,53 @@ function fixImageUrl($url)
         return 'http://' . $_SERVER['HTTP_HOST'] . '/' . $url;
     }
     return $url;
+}
+
+/**
+ * Sayfa için meta description oluştur
+ * @param array $post Blog yazısı verisi
+ * @return string
+ */
+function getMetaDescription($post = null) {
+    if ($post && isset($post['excerpt'])) {
+        return strip_tags($post['excerpt']);
+    }
+    return SITE_DESCRIPTION;
+}
+
+/**
+ * Sayfa için meta keywords oluştur
+ * @param array $post Blog yazısı verisi
+ * @return string
+ */
+function getMetaKeywords($post = null) {
+    $keywords = [];
+    
+    // Varsayılan anahtar kelimeleri ekle
+    $keywords = explode(',', SITE_KEYWORDS);
+    
+    if ($post) {
+        // Yazının kategorilerini ekle
+        if (isset($post['category'])) {
+            $categories = is_array($post['category']) ? $post['category'] : [$post['category']];
+            $keywords = array_merge($keywords, $categories);
+        }
+        
+        // Yazının etiketlerini ekle
+        if (isset($post['tags'])) {
+            $keywords = array_merge($keywords, $post['tags']);
+        }
+    }
+    
+    // Benzersiz yap ve birleştir
+    return implode(', ', array_unique(array_map('trim', $keywords)));
+}
+
+/**
+ * Canonical URL oluştur
+ * @param string $path Sayfa yolu
+ * @return string
+ */
+function getCanonicalUrl($path = '') {
+    return 'http://' . $_SERVER['HTTP_HOST'] . '/' . ltrim($path, '/');
 }
