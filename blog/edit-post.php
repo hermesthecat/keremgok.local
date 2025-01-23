@@ -212,19 +212,12 @@ $pageTitle = "Yazıyı Düzenle: " . $title;
                 {
                     name: "table",
                     action: EasyMDE.drawTable,
-                    className: "fa fa-table",
+                    className: "fas fa-table",
                     title: "Tablo Ekle",
                 },
                 {
                     name: "emoji",
                     action: function(editor) {
-                        const emojiList = ["😀", "😃", "😄", "😁", "😅", "😂", "🤣", "😊", "😇",
-                            "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙",
-                            "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓",
-                            "😎", "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕",
-                            "🙁", "☹️", "😣", "😖", "😫", "😩", "🥺", "😢", "😭"
-                        ];
-
                         // Emoji seçici oluştur
                         const picker = document.createElement('div');
                         picker.className = 'emoji-picker';
@@ -237,6 +230,16 @@ $pageTitle = "Yazıyı Düzenle: " . $title;
                         picker.style.gridTemplateColumns = 'repeat(10, 1fr)';
                         picker.style.gap = '5px';
                         picker.style.zIndex = '1000';
+                        picker.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+                        picker.style.top = '100%';
+                        picker.style.left = '0';
+
+                        const emojiList = ["😀", "😃", "😄", "😁", "😅", "😂", "🤣", "😊", "😇",
+                            "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙",
+                            "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓",
+                            "😎", "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕",
+                            "🙁", "☹️", "😣", "😖", "😫", "😩", "🥺", "😢", "😭"
+                        ];
 
                         // Emojileri ekle
                         emojiList.forEach(emoji => {
@@ -246,8 +249,12 @@ $pageTitle = "Yazıyı Düzenle: " . $title;
                             btn.style.background = 'none';
                             btn.style.cursor = 'pointer';
                             btn.style.fontSize = '20px';
+                            btn.style.padding = '5px';
+                            btn.style.width = '100%';
+                            btn.style.height = '100%';
                             btn.onclick = (e) => {
                                 e.preventDefault();
+                                e.stopPropagation();
                                 const pos = editor.codemirror.getCursor();
                                 editor.codemirror.replaceRange(emoji, pos);
                                 picker.remove();
@@ -255,17 +262,28 @@ $pageTitle = "Yazıyı Düzenle: " . $title;
                             picker.appendChild(btn);
                         });
 
-                        // Editörün üzerine yerleştir
-                        const toolbar = editor.gui.toolbar;
-                        toolbar.appendChild(picker);
+                        // Editörün toolbar'ına ekle
+                        const toolbarButton = editor.gui.toolbar.getElementsByClassName('fas fa-face-smile')[0];
+                        if (toolbarButton) {
+                            const buttonRect = toolbarButton.getBoundingClientRect();
+                            picker.style.position = 'fixed';
+                            picker.style.left = buttonRect.left + 'px';
+                            picker.style.top = (buttonRect.bottom + 5) + 'px';
+                            document.body.appendChild(picker);
+                        }
 
                         // Dışarı tıklandığında kapat
-                        document.addEventListener('click', function closeEmoji(e) {
-                            if (!picker.contains(e.target)) {
+                        const closeEmoji = function(e) {
+                            if (!picker.contains(e.target) && !toolbarButton.contains(e.target)) {
                                 picker.remove();
                                 document.removeEventListener('click', closeEmoji);
                             }
-                        });
+                        };
+
+                        // Bir tick bekleyip event listener'ı ekle
+                        setTimeout(() => {
+                            document.addEventListener('click', closeEmoji);
+                        }, 0);
                     },
                     className: "fas fa-face-smile",
                     title: "Emoji Ekle",
