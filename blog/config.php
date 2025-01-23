@@ -11,7 +11,7 @@ require_once __DIR__ . '/Parsedown.php';
 
 // Site ayarları
 define('SITE_TITLE', 'Blog');
-define('POSTS_PER_PAGE', 10);
+define('POSTS_PER_PAGE', 5);
 define('EXCERPT_LENGTH', 200);
 define('POSTS_DIR', __DIR__ . '/posts/');
 define('AUTHOR_NAME', 'A. Kerem Gök');
@@ -134,10 +134,9 @@ function getPostsByTag($tag, $page = 1, $limit = POSTS_PER_PAGE) {
 /**
  * Blog yazılarını getir
  * @param int $page Sayfa numarası
- * @param int $limit Sayfa başına gösterilecek yazı sayısı
  * @return array
  */
-function getBlogPosts($page = 1, $limit = POSTS_PER_PAGE) {
+function getBlogPosts($page = 1) {
     $posts = [];
     $files = glob(POSTS_DIR . '*.md');
     
@@ -146,16 +145,19 @@ function getBlogPosts($page = 1, $limit = POSTS_PER_PAGE) {
         return filemtime($b) - filemtime($a);
     });
     
-    // Sayfalama
-    $offset = ($page - 1) * $limit;
-    $files = array_slice($files, $offset, $limit);
+    // Sayfalama için başlangıç ve bitiş indekslerini hesapla
+    $start = ($page - 1) * POSTS_PER_PAGE;
+    $files = array_slice($files, $start, POSTS_PER_PAGE);
     
     foreach ($files as $file) {
         $content = file_get_contents($file);
         $post = parseMarkdown($content);
-        $post['id'] = basename($file, '.md');
-        $post['created_at'] = date('Y-m-d H:i:s', filemtime($file));
-        $posts[] = $post;
+        
+        if ($post) {
+            $post['id'] = basename($file, '.md');
+            $post['created_at'] = date('Y-m-d H:i:s', filemtime($file));
+            $posts[] = $post;
+        }
     }
     
     return $posts;

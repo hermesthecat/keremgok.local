@@ -63,28 +63,39 @@ body {
 }
 
 .blog-posts {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 2rem;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    padding: 1rem;
 }
 
 .blog-post {
-    background: var(--bg-secondary);
+    background: #fff;
     border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 1.5rem;
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .blog-post:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .blog-post h2 {
     margin: 0 0 1rem;
     color: var(--text-primary);
-    font-size: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.post-excerpt {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+    margin: 1.5rem 0;
 }
 
 .post-meta {
@@ -495,6 +506,43 @@ body {
     border-radius: 0 0 4px 4px;
     background: var(--bg-secondary);
     padding: 0.5rem;
+}
+
+/* Sayfalama stilleri */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 2rem 0;
+}
+
+.page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    border-radius: 4px;
+    background: #fff;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.page-link:hover {
+    background: #f0f0f0;
+}
+
+.page-link.active {
+    background: #007bff;
+    color: #fff;
+}
+
+.page-link.active:hover {
+    background: #0056b3;
 }
 
 /* Diğer stiller buraya gelecek... */ 

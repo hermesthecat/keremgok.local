@@ -114,6 +114,34 @@ $parsedown->setSafeMode(true);
                     echo '<a href="post.php?id=' . $post['id'] . '" class="read-more">Devamını Oku</a>';
                     echo '</article>';
                 }
+
+                // Sayfalama
+                $totalPosts = count(glob(POSTS_DIR . '*.md'));
+                $totalPages = ceil($totalPosts / POSTS_PER_PAGE);
+                
+                if ($totalPages > 1) {
+                    echo '<div class="pagination">';
+                    
+                    // Önceki sayfa
+                    if ($page > 1) {
+                        $prevPage = $page - 1;
+                        echo '<a href="?page=' . $prevPage . '" class="page-link">← Önceki</a>';
+                    }
+                    
+                    // Sayfa numaraları
+                    for ($i = 1; $i <= $totalPages; $i++) {
+                        $activeClass = ($i === $page) ? ' active' : '';
+                        echo '<a href="?page=' . $i . '" class="page-link' . $activeClass . '">' . $i . '</a>';
+                    }
+                    
+                    // Sonraki sayfa
+                    if ($page < $totalPages) {
+                        $nextPage = $page + 1;
+                        echo '<a href="?page=' . $nextPage . '" class="page-link">Sonraki →</a>';
+                    }
+                    
+                    echo '</div>';
+                }
             } else {
                 echo '<p class="no-posts">Henüz blog yazısı bulunmamaktadır.</p>';
             }
