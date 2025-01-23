@@ -85,27 +85,27 @@ $pageTitle = $post['title'] . " - Blog";
 
         <article class="blog-post full-post">
             <h1><?php echo htmlspecialchars($post['title']); ?></h1>
-            
+
             <div class="post-meta">
                 <span class="post-date"><?php echo date('d.m.Y', strtotime($post['created_at'])); ?></span>
                 <span class="post-author"><?php echo htmlspecialchars($post['author']); ?></span>
                 <?php if (isset($post['category'])): ?>
-                <span class="post-category">
-                    <a href="index.php?category=<?php echo urlencode($post['category']); ?>">
-                        <?php echo htmlspecialchars($post['category']); ?>
-                    </a>
-                </span>
+                    <span class="post-category">
+                        <a href="index.php?category=<?php echo urlencode($post['category']); ?>">
+                            <?php echo htmlspecialchars($post['category']); ?>
+                        </a>
+                    </span>
                 <?php endif; ?>
             </div>
 
             <?php if (isset($post['tags']) && !empty($post['tags'])): ?>
-            <div class="post-tags">
-                <?php foreach ($post['tags'] as $tag): ?>
-                <a href="index.php?tag=<?php echo urlencode($tag); ?>" class="tag">
-                    <?php echo htmlspecialchars($tag); ?>
-                </a>
-                <?php endforeach; ?>
-            </div>
+                <div class="post-tags">
+                    <?php foreach ($post['tags'] as $tag): ?>
+                        <a href="index.php?tag=<?php echo urlencode($tag); ?>" class="tag">
+                            <?php echo htmlspecialchars($tag); ?>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
             <?php endif; ?>
 
             <div class="post-content">
