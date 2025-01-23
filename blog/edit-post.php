@@ -54,7 +54,15 @@ $post = parseMarkdown($content);
 
 // Form verilerini hazırla
 $title = $post['title'];
-$content = implode("\n", array_slice(explode("\n", $content), strpos($content, "---\n\n") + 5));
+
+// İçeriği YAML front matter'dan ayır
+$contentParts = explode("---", $content);
+if (count($contentParts) >= 3) {
+    // İlk "---" ve ikinci "---" arasındaki YAML kısmını atla
+    // ve geri kalan içeriği al
+    $content = trim(implode("---", array_slice($contentParts, 2)));
+}
+
 $categories_input = is_array($post['category']) ? implode(', ', $post['category']) : $post['category'];
 $tags = isset($post['tags']) ? implode(', ', $post['tags']) : '';
 

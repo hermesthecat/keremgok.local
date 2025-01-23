@@ -1,9 +1,8 @@
 ---
 title: Merhaba Dünya
 author: A. Kerem Gök
-date: 2024-01-23
-category: Genel
-tags: [markdown, blog, php]
+category: Genel, sdfsdf
+tags: [markdown,blog,php]
 ---
 
 Bu benim ilk blog yazım. Markdown formatında yazılmış bir blog yazısı örneği.
@@ -32,4 +31,4 @@ echo "Merhaba Dünya!";
 ## Sonuç
 
 Bu blog yazısı, markdown formatının temel özelliklerini göstermek için yazılmıştır.
-Markdown kullanarak blog yazıları yazmak hem kolay hem de eğlenceli! 
+Markdown kullanarak blog yazıları yazmak hem kolay hem de eğlenceli!
