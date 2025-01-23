@@ -37,6 +37,8 @@ $pageTitle = $post['title'] . " - Blog";
 $parsedown = new Parsedown();
 $parsedown->setSafeMode(true);
 
+// Header'ı dahil et
+include_once '../header.php';
 ?>
 
 <!DOCTYPE html>
@@ -46,7 +48,6 @@ $parsedown->setSafeMode(true);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle); ?></title>
-    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="blog.css">
     <script src="blog.js" defer></script>
 </head>
@@ -59,7 +60,24 @@ $parsedown->setSafeMode(true);
             <div class="post-meta">
                 <span class="post-date"><?php echo date('d.m.Y', strtotime($post['created_at'])); ?></span>
                 <span class="post-author"><?php echo htmlspecialchars($post['author']); ?></span>
+                <?php if (isset($post['category'])): ?>
+                    <span class="post-category">
+                        <a href="index.php?category=<?php echo urlencode($post['category']); ?>">
+                            <?php echo htmlspecialchars($post['category']); ?>
+                        </a>
+                    </span>
+                <?php endif; ?>
             </div>
+
+            <?php if (isset($post['tags']) && !empty($post['tags'])): ?>
+                <div class="post-tags">
+                    <?php foreach ($post['tags'] as $tag): ?>
+                        <a href="index.php?tag=<?php echo urlencode($tag); ?>" class="tag">
+                            <?php echo htmlspecialchars($tag); ?>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
 
             <div class="post-content">
                 <?php echo $post['content']; ?>

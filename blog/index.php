@@ -22,6 +22,8 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $parsedown = new Parsedown();
 $parsedown->setSafeMode(true);
 
+// Header'ı dahil et
+include_once '../header.php';
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +33,6 @@ $parsedown->setSafeMode(true);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle; ?></title>
-    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="blog.css">
     <script src="blog.js" defer></script>
 </head>

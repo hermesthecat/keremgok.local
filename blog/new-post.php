@@ -56,6 +56,8 @@ $allTags = getAllTags();
 // Sayfa başlığı
 $pageTitle = "Yeni Yazı - Blog";
 
+// Header'ı dahil et
+include_once '../header.php';
 ?>
 
 <!DOCTYPE html>
@@ -65,7 +67,6 @@ $pageTitle = "Yeni Yazı - Blog";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle); ?></title>
-    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="blog.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
     <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
