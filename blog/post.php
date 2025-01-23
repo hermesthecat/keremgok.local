@@ -38,6 +38,33 @@ $pageTitle = $post['title'] . " - Blog";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="<?php echo htmlspecialchars(getMetaDescription($post)); ?>">
+    <meta name="keywords" content="<?php echo htmlspecialchars(getMetaKeywords($post)); ?>">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="<?php echo getCanonicalUrl('post.php?id=' . $postId); ?>">
+    <meta property="og:title" content="<?php echo htmlspecialchars($post['title']); ?>">
+    <meta property="og:description" content="<?php echo htmlspecialchars(getMetaDescription($post)); ?>">
+    <meta property="article:published_time" content="<?php echo date('c', strtotime($post['created_at'])); ?>">
+    <meta property="article:author" content="<?php echo htmlspecialchars(AUTHOR_NAME); ?>">
+    <?php if (isset($post['category'])): 
+        $categories = is_array($post['category']) ? $post['category'] : [$post['category']];
+        foreach ($categories as $cat): ?>
+        <meta property="article:section" content="<?php echo htmlspecialchars(trim($cat)); ?>">
+    <?php endforeach; endif; ?>
+    <?php if (isset($post['tags']) && !empty($post['tags'])): 
+        foreach ($post['tags'] as $tag): ?>
+        <meta property="article:tag" content="<?php echo htmlspecialchars($tag); ?>">
+    <?php endforeach; endif; ?>
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="<?php echo getCanonicalUrl('post.php?id=' . $postId); ?>">
+    <meta property="twitter:title" content="<?php echo htmlspecialchars($post['title']); ?>">
+    <meta property="twitter:description" content="<?php echo htmlspecialchars(getMetaDescription($post)); ?>">
+    
+    <link rel="canonical" href="<?php echo getCanonicalUrl('post.php?id=' . $postId); ?>">
     <title><?php echo htmlspecialchars($pageTitle); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="blog.css">

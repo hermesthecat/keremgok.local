@@ -29,6 +29,22 @@ $parsedown->setSafeMode(true);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="<?php echo htmlspecialchars(getMetaDescription()); ?>">
+    <meta name="keywords" content="<?php echo htmlspecialchars(getMetaKeywords()); ?>">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?php echo getCanonicalUrl(); ?>">
+    <meta property="og:title" content="<?php echo htmlspecialchars($pageTitle); ?>">
+    <meta property="og:description" content="<?php echo htmlspecialchars(getMetaDescription()); ?>">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="<?php echo getCanonicalUrl(); ?>">
+    <meta property="twitter:title" content="<?php echo htmlspecialchars($pageTitle); ?>">
+    <meta property="twitter:description" content="<?php echo htmlspecialchars(getMetaDescription()); ?>">
+    
+    <link rel="canonical" href="<?php echo getCanonicalUrl(); ?>">
     <title><?php echo $pageTitle; ?></title>
     <link rel="stylesheet" href="blog.css">
     <script src="blog.js" defer></script>
