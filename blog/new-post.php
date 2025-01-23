@@ -115,6 +115,7 @@ $pageTitle = "Yeni Blog Yazısı";
     <title><?php echo $pageTitle; ?></title>
     <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="blog.css">
     <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -230,7 +231,8 @@ $pageTitle = "Yeni Blog Yazısı";
                             btn.style.background = 'none';
                             btn.style.cursor = 'pointer';
                             btn.style.fontSize = '20px';
-                            btn.onclick = () => {
+                            btn.onclick = (e) => {
+                                e.preventDefault();
                                 const pos = editor.codemirror.getCursor();
                                 editor.codemirror.replaceRange(emoji, pos);
                                 picker.remove();
@@ -250,7 +252,7 @@ $pageTitle = "Yeni Blog Yazısı";
                             }
                         });
                     },
-                    className: "fa fa-smile-o",
+                    className: "fas fa-face-smile",
                     title: "Emoji Ekle",
                 },
                 '|',
