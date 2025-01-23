@@ -347,7 +347,8 @@ function fixImageUrl($url)
  * @param array $post Blog yazısı verisi
  * @return string
  */
-function getMetaDescription($post = null) {
+function getMetaDescription($post = null)
+{
     if ($post && isset($post['excerpt'])) {
         return strip_tags($post['excerpt']);
     }
@@ -359,25 +360,26 @@ function getMetaDescription($post = null) {
  * @param array $post Blog yazısı verisi
  * @return string
  */
-function getMetaKeywords($post = null) {
+function getMetaKeywords($post = null)
+{
     $keywords = [];
-    
+
     // Varsayılan anahtar kelimeleri ekle
     $keywords = explode(',', SITE_KEYWORDS);
-    
+
     if ($post) {
         // Yazının kategorilerini ekle
         if (isset($post['category'])) {
             $categories = is_array($post['category']) ? $post['category'] : [$post['category']];
             $keywords = array_merge($keywords, $categories);
         }
-        
+
         // Yazının etiketlerini ekle
         if (isset($post['tags'])) {
             $keywords = array_merge($keywords, $post['tags']);
         }
     }
-    
+
     // Benzersiz yap ve birleştir
     return implode(', ', array_unique(array_map('trim', $keywords)));
 }
@@ -387,26 +389,31 @@ function getMetaKeywords($post = null) {
  * @param string $path Sayfa yolu
  * @return string
  */
-function getCanonicalUrl($path = '') {
+function getCanonicalUrl($path = '')
+{
     return 'http://' . $_SERVER['HTTP_HOST'] . '/' . ltrim($path, '/');
 }
 
 // SEO URL fonksiyonları
-function getPostUrl($postId, $title = '') {
+function getPostUrl($postId, $title = '')
+{
     if ($title) {
         return 'yazi/' . $postId . '/' . createSlug($title);
     }
     return 'yazi/' . $postId;
 }
 
-function getCategoryUrl($category) {
+function getCategoryUrl($category)
+{
     return 'kategori/' . createSlug($category);
 }
 
-function getTagUrl($tag) {
+function getTagUrl($tag)
+{
     return 'etiket/' . createSlug($tag);
 }
 
-function getPageUrl($page) {
+function getPageUrl($page)
+{
     return 'sayfa/' . $page;
 }
