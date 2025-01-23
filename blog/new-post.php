@@ -32,7 +32,7 @@ if (isset($_FILES['image']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
             
             $destination = UPLOAD_DIR . $newFileName;
             if (move_uploaded_file($file['tmp_name'], $destination)) {
-                echo json_encode(['success' => 1, 'file' => ['url' => $destination]]);
+                echo json_encode(['success' => 1, 'file' => ['url' => '/' . $destination]]);
                 exit;
             }
         }
@@ -184,6 +184,13 @@ $pageTitle = "Yeni Blog Yazısı";
             imageUploadEndpoint: 'new-post.php',
             imageMaxSize: <?php echo MAX_FILE_SIZE; ?>,
             imageAccept: '<?php echo '.'.implode(',.', ALLOWED_EXTENSIONS); ?>',
+            toolbar: [
+                'bold', 'italic', 'heading', '|',
+                'quote', 'unordered-list', 'ordered-list', '|',
+                'link', 'image', 'upload-image', '|',
+                'preview', 'side-by-side', 'fullscreen', '|',
+                'guide'
+            ],
             imageUploadFunction: function(file, onSuccess, onError) {
                 var formData = new FormData();
                 formData.append('image', file);
