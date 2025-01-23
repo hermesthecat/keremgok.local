@@ -33,9 +33,11 @@ function getAllCategories() {
         $content = file_get_contents($file);
         $post = parseMarkdown($content);
         if (isset($post['category'])) {
-            $categories[$post['category']] = isset($categories[$post['category']]) 
-                ? $categories[$post['category']] + 1 
-                : 1;
+            $postCategories = is_array($post['category']) ? $post['category'] : explode(',', str_replace(['[', ']', ' '], '', $post['category']));
+            foreach ($postCategories as $category) {
+                $category = trim($category);
+                $categories[$category] = isset($categories[$category]) ? $categories[$category] + 1 : 1;
+            }
         }
     }
     
@@ -80,10 +82,13 @@ function getPostsByCategory($category, $page = 1, $limit = POSTS_PER_PAGE) {
     foreach ($files as $file) {
         $content = file_get_contents($file);
         $post = parseMarkdown($content);
-        if (isset($post['category']) && $post['category'] === $category) {
-            $post['id'] = basename($file, '.md');
-            $post['created_at'] = date('Y-m-d H:i:s', filemtime($file));
-            $posts[] = $post;
+        if (isset($post['category'])) {
+            $postCategories = is_array($post['category']) ? $post['category'] : explode(',', str_replace(['[', ']', ' '], '', $post['category']));
+            if (in_array($category, array_map('trim', $postCategories))) {
+                $post['id'] = basename($file, '.md');
+                $post['created_at'] = date('Y-m-d H:i:s', filemtime($file));
+                $posts[] = $post;
+            }
         }
     }
     

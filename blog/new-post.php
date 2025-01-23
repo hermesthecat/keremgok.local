@@ -48,7 +48,7 @@ if (isset($_FILES['image']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_FILES['image'])) {
     $title = trim($_POST['title'] ?? '');
     $content = trim($_POST['content'] ?? '');
-    $category = trim($_POST['category'] ?? '');
+    $categories_input = trim($_POST['categories'] ?? '');
     $tags = trim($_POST['tags'] ?? '');
 
     // Validasyon
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_FILES['image'])) {
         $error = 'Başlık alanı zorunludur.';
     } elseif (empty($content)) {
         $error = 'İçerik alanı zorunludur.';
-    } elseif (empty($category)) {
+    } elseif (empty($categories_input)) {
         $error = 'Kategori alanı zorunludur.';
     } else {
         try {
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_FILES['image'])) {
             $markdown = "---\n";
             $markdown .= "title: " . $title . "\n";
             $markdown .= "author: " . AUTHOR_NAME . "\n";
-            $markdown .= "category: " . $category . "\n";
+            $markdown .= "category: " . $categories_input . "\n";
 
             if (!empty($tags)) {
                 $tagArray = array_map('trim', explode(',', $tags));
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_FILES['image'])) {
             if (file_put_contents(POSTS_DIR . $slug . '.md', $markdown)) {
                 $success = 'Blog yazısı başarıyla yayınlandı.';
                 // Formu temizle
-                $title = $content = $category = $tags = '';
+                $title = $content = $categories_input = $tags = '';
             } else {
                 $error = 'Yazı kaydedilirken bir hata oluştu.';
             }
@@ -141,12 +141,12 @@ $pageTitle = "Yeni Blog Yazısı";
             </div>
 
             <div class="form-group">
-                <label for="category">Kategori</label>
-                <input type="text" id="category" name="category" value="<?php echo htmlspecialchars($category ?? ''); ?>">
+                <label for="categories">Kategoriler (virgülle ayırın)</label>
+                <input type="text" id="categories" name="categories" value="<?php echo htmlspecialchars($categories_input ?? ''); ?>">
                 <?php if (!empty($categories)): ?>
                 <div class="category-suggestions">
                     <?php foreach ($categories as $cat): ?>
-                        <span class="category-tag" onclick="setCategory('<?php echo htmlspecialchars($cat); ?>')"><?php echo htmlspecialchars($cat); ?></span>
+                        <span class="category-tag" onclick="addCategory('<?php echo htmlspecialchars($cat); ?>')"><?php echo htmlspecialchars($cat); ?></span>
                     <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
@@ -220,9 +220,15 @@ $pageTitle = "Yeni Blog Yazısı";
             document.getElementById('content').value = easyMDE.value();
         });
 
-        // Kategori seçme fonksiyonu
-        function setCategory(category) {
-            document.getElementById('category').value = category;
+        // Kategori ekleme fonksiyonu
+        function addCategory(category) {
+            var categoriesInput = document.getElementById('categories');
+            var currentCategories = categoriesInput.value.split(',').map(t => t.trim()).filter(t => t);
+            
+            if (!currentCategories.includes(category)) {
+                currentCategories.push(category);
+                categoriesInput.value = currentCategories.join(', ');
+            }
         }
 
         // Etiket ekleme fonksiyonu
