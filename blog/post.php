@@ -87,7 +87,7 @@ $pageTitle = $post['title'] . " - Blog";
                     $categories = getAllCategories();
                     foreach ($categories as $cat => $count) {
                         $activeClass = (isset($post['category']) && $post['category'] === $cat) ? ' class="active"' : '';
-                        echo '<li><a href="index.php?category=' . urlencode($cat) . '"' . $activeClass . '>';
+                        echo '<li><a href="' . getCategoryUrl($cat) . '"' . $activeClass . '>';
                         echo htmlspecialchars($cat) . ' (' . $count . ')</a></li>';
                     }
                     ?>
@@ -102,7 +102,7 @@ $pageTitle = $post['title'] . " - Blog";
                     foreach ($tags as $t => $count) {
                         $activeClass = (isset($post['tags']) && in_array($t, $post['tags'])) ? ' active' : '';
                         $size = 1 + min(1.5, $count / max($tags));
-                        echo '<a href="index.php?tag=' . urlencode($t) . '" class="tag' . $activeClass . '" ';
+                        echo '<a href="' . getTagUrl($t) . '" class="tag' . $activeClass . '" ';
                         echo 'style="font-size: ' . $size . 'em">';
                         echo htmlspecialchars($t) . '</a>';
                     }
@@ -121,7 +121,7 @@ $pageTitle = $post['title'] . " - Blog";
                         $categories = is_array($post['category']) ? $post['category'] : [$post['category']];
                         foreach ($categories as $cat): ?>
                             <span class="post-category">
-                                <a href="index.php?category=<?php echo urlencode(trim($cat)); ?>">
+                                <a href="<?php echo getCategoryUrl(trim($cat)); ?>">
                                     <?php echo htmlspecialchars(trim($cat)); ?>
                                 </a>
                             </span>
@@ -151,7 +151,7 @@ $pageTitle = $post['title'] . " - Blog";
             <?php if (!empty($post['tags'])): ?>
                 <div class="post-tags">
                     <?php foreach ($post['tags'] as $tag): ?>
-                        <a href="index.php?tag=<?php echo urlencode($tag); ?>" class="tag">
+                        <a href="<?php echo getTagUrl($tag); ?>" class="tag">
                             <i class="fas fa-tag"></i> <?php echo htmlspecialchars($tag); ?>
                         </a>
                     <?php endforeach; ?>

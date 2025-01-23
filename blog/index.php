@@ -67,7 +67,7 @@ $parsedown->setSafeMode(true);
                     $categories = getAllCategories();
                     foreach ($categories as $cat => $count) {
                         $activeClass = ($category === $cat) ? ' class="active"' : '';
-                        echo '<li><a href="?category=' . urlencode($cat) . '"' . $activeClass . '>';
+                        echo '<li><a href="' . getCategoryUrl($cat) . '"' . $activeClass . '>';
                         echo htmlspecialchars($cat) . ' (' . $count . ')</a></li>';
                     }
                     ?>
@@ -82,7 +82,7 @@ $parsedown->setSafeMode(true);
                     foreach ($tags as $t => $count) {
                         $activeClass = ($tag === $t) ? ' active' : '';
                         $size = 1 + min(1.5, $count / max($tags));
-                        echo '<a href="?tag=' . urlencode($t) . '" class="tag' . $activeClass . '" ';
+                        echo '<a href="' . getTagUrl($t) . '" class="tag' . $activeClass . '" ';
                         echo 'style="font-size: ' . $size . 'em">';
                         echo htmlspecialchars($t) . '</a>';
                     }
@@ -107,7 +107,7 @@ $parsedown->setSafeMode(true);
             if ($posts) {
                 foreach ($posts as $post) {
                     echo '<article class="blog-post" id="post-' . $post['id'] . '">';
-                    echo '<h2>' . htmlspecialchars($post['title']) . '</h2>';
+                    echo '<h2><a href="' . getPostUrl($post['id'], $post['title']) . '">' . htmlspecialchars($post['title']) . '</a></h2>';
                     echo '<div class="post-meta">';
                     echo '<span class="post-date">' . date('d.m.Y', strtotime($post['created_at'])) . '</span>';
                     echo '<span class="post-author">' . htmlspecialchars($post['author']) . '</span>';
@@ -115,7 +115,7 @@ $parsedown->setSafeMode(true);
                         $categories = is_array($post['category']) ? $post['category'] : [$post['category']];
                         foreach ($categories as $cat) {
                             echo '<span class="post-category">';
-                            echo '<a href="?category=' . urlencode(trim($cat)) . '">';
+                            echo '<a href="' . getCategoryUrl(trim($cat)) . '">';
                             echo htmlspecialchars(trim($cat)) . '</a>';
                             echo '</span>';
                         }
@@ -128,13 +128,13 @@ $parsedown->setSafeMode(true);
                     if (isset($post['tags']) && !empty($post['tags'])) {
                         echo '<div class="post-tags">';
                         foreach ($post['tags'] as $t) {
-                            echo '<a href="?tag=' . urlencode($t) . '" class="tag">';
+                            echo '<a href="' . getTagUrl($t) . '" class="tag">';
                             echo '<i class="fas fa-tag"></i> ' . htmlspecialchars($t) . '</a>';
                         }
                         echo '</div>';
                     }
                     echo '<div class="post-actions">';
-                    echo '<a href="post.php?id=' . $post['id'] . '" class="read-more">Devamını Oku</a>';
+                    echo '<a href="' . getPostUrl($post['id'], $post['title']) . '" class="read-more">Devamını Oku</a>';
                     echo '<a href="edit-post.php?id=' . $post['id'] . '" class="edit-post">Düzenle</a>';
                     echo '</div>';
                     echo '</article>';
@@ -150,19 +150,19 @@ $parsedown->setSafeMode(true);
                     // Önceki sayfa
                     if ($page > 1) {
                         $prevPage = $page - 1;
-                        echo '<a href="?page=' . $prevPage . '" class="page-link">← Önceki</a>';
+                        echo '<a href="' . getPageUrl($prevPage) . '" class="page-link">← Önceki</a>';
                     }
 
                     // Sayfa numaraları
                     for ($i = 1; $i <= $totalPages; $i++) {
                         $activeClass = ($i === $page) ? ' active' : '';
-                        echo '<a href="?page=' . $i . '" class="page-link' . $activeClass . '">' . $i . '</a>';
+                        echo '<a href="' . getPageUrl($i) . '" class="page-link' . $activeClass . '">' . $i . '</a>';
                     }
 
                     // Sonraki sayfa
                     if ($page < $totalPages) {
                         $nextPage = $page + 1;
-                        echo '<a href="?page=' . $nextPage . '" class="page-link">Sonraki →</a>';
+                        echo '<a href="' . getPageUrl($nextPage) . '" class="page-link">Sonraki →</a>';
                     }
 
                     echo '</div>';

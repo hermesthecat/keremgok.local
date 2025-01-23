@@ -390,3 +390,23 @@ function getMetaKeywords($post = null) {
 function getCanonicalUrl($path = '') {
     return 'http://' . $_SERVER['HTTP_HOST'] . '/' . ltrim($path, '/');
 }
+
+// SEO URL fonksiyonları
+function getPostUrl($postId, $title = '') {
+    if ($title) {
+        return 'yazi/' . $postId . '/' . createSlug($title);
+    }
+    return 'yazi/' . $postId;
+}
+
+function getCategoryUrl($category) {
+    return 'kategori/' . createSlug($category);
+}
+
+function getTagUrl($tag) {
+    return 'etiket/' . createSlug($tag);
+}
+
+function getPageUrl($page) {
+    return 'sayfa/' . $page;
+}
