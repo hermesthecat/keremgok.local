@@ -114,6 +114,7 @@ $pageTitle = $post['title'] . " - Blog";
 
             <div class="post-navigation">
                 <a href="index.php" class="back-to-blog">← Blog'a Dön</a>
+                <a href="edit-post.php?id=<?php echo $post['id']; ?>" class="edit-post">Düzenle</a>
             </div>
         </article>
     </main>
