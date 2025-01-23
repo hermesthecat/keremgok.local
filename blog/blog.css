@@ -613,4 +613,38 @@ body {
     background: rgba(0, 0, 0, 0.7);
 }
 
+/* Kategori ve Etiket Önerileri */
+.category-suggestions,
+.tag-suggestions {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.category-tag,
+.tag {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    background: var(--bg-tag);
+    color: var(--text-secondary);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.category-tag:hover,
+.tag:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.category-tag.active,
+.tag.active {
+    background: var(--primary-color);
+    color: white;
+}
+
 /* Diğer stiller buraya gelecek... */ 

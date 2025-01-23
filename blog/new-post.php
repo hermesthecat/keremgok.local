@@ -142,23 +142,25 @@ $pageTitle = "Yeni Blog Yazısı";
 
             <div class="form-group">
                 <label for="category">Kategori</label>
-                <input type="text" id="category" name="category" value="<?php echo htmlspecialchars($category ?? ''); ?>" list="categoryList">
-                <datalist id="categoryList">
+                <input type="text" id="category" name="category" value="<?php echo htmlspecialchars($category ?? ''); ?>">
+                <?php if (!empty($categories)): ?>
+                <div class="category-suggestions">
                     <?php foreach ($categories as $cat): ?>
-                        <option value="<?php echo htmlspecialchars($cat); ?>">
-                        <?php endforeach; ?>
-                </datalist>
+                        <span class="category-tag" onclick="setCategory('<?php echo htmlspecialchars($cat); ?>')"><?php echo htmlspecialchars($cat); ?></span>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
             </div>
 
             <div class="form-group">
                 <label for="tags">Etiketler (virgülle ayırın)</label>
                 <input type="text" id="tags" name="tags" value="<?php echo htmlspecialchars($tags ?? ''); ?>">
                 <?php if (!empty($allTags)): ?>
-                    <div class="tag-suggestions">
-                        <?php foreach ($allTags as $tag): ?>
-                            <span class="tag" onclick="addTag('<?php echo htmlspecialchars($tag); ?>')"><?php echo htmlspecialchars($tag); ?></span>
-                        <?php endforeach; ?>
-                    </div>
+                <div class="tag-suggestions">
+                    <?php foreach ($allTags as $tag): ?>
+                        <span class="tag" onclick="addTag('<?php echo htmlspecialchars($tag); ?>')"><?php echo htmlspecialchars($tag); ?></span>
+                    <?php endforeach; ?>
+                </div>
                 <?php endif; ?>
             </div>
 
@@ -183,7 +185,7 @@ $pageTitle = "Yeni Blog Yazısı";
             uploadImage: true,
             imageUploadEndpoint: 'new-post.php',
             imageMaxSize: <?php echo MAX_FILE_SIZE; ?>,
-            imageAccept: '<?php echo '.' . implode(',.', ALLOWED_EXTENSIONS); ?>',
+            imageAccept: '<?php echo '.'.implode(',.', ALLOWED_EXTENSIONS); ?>',
             toolbar: [
                 'bold', 'italic', 'heading', '|',
                 'quote', 'unordered-list', 'ordered-list', '|',
@@ -196,20 +198,20 @@ $pageTitle = "Yeni Blog Yazısı";
                 formData.append('image', file);
 
                 fetch('new-post.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(result => {
-                        if (result.success) {
-                            onSuccess(result.file.url);
-                        } else {
-                            onError(result.message);
-                        }
-                    })
-                    .catch(error => {
-                        onError('Dosya yüklenirken bir hata oluştu.');
-                    });
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        onSuccess(result.file.url);
+                    } else {
+                        onError(result.message);
+                    }
+                })
+                .catch(error => {
+                    onError('Dosya yüklenirken bir hata oluştu.');
+                });
             }
         });
 
@@ -218,11 +220,16 @@ $pageTitle = "Yeni Blog Yazısı";
             document.getElementById('content').value = easyMDE.value();
         });
 
+        // Kategori seçme fonksiyonu
+        function setCategory(category) {
+            document.getElementById('category').value = category;
+        }
+
         // Etiket ekleme fonksiyonu
         function addTag(tag) {
             var tagsInput = document.getElementById('tags');
             var currentTags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t);
-
+            
             if (!currentTags.includes(tag)) {
                 currentTags.push(tag);
                 tagsInput.value = currentTags.join(', ');
