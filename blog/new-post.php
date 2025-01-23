@@ -129,56 +129,58 @@ $pageTitle = "Yeni Blog Yazısı";
 <body>
     <main class="blog-container editor-page">
         <div class="blog-header">
-            <h1><?php echo $pageTitle; ?></h1>
-            <a href="index.php" class="btn-secondary">Blog'a Dön</a>
+            <h1><?php echo __('new_post'); ?></h1>
+            <div class="header-actions">
+                <div class="language-switcher">
+                    <a href="<?php echo getLanguageUrl('tr'); ?>" class="<?php echo getCurrentLanguage() === 'tr' ? 'active' : ''; ?>">TR</a>
+                    <a href="<?php echo getLanguageUrl('en'); ?>" class="<?php echo getCurrentLanguage() === 'en' ? 'active' : ''; ?>">EN</a>
+                </div>
+                <a href="index.php" class="btn-secondary"><?php echo __('back_to_blog'); ?></a>
+            </div>
         </div>
 
-        <?php if ($error): ?>
-            <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
+        <?php if (isset($error)): ?>
+            <div class="alert alert-error"><?php echo __($error); ?></div>
         <?php endif; ?>
 
-        <?php if ($success): ?>
-            <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
+        <?php if (isset($success)): ?>
+            <div class="alert alert-success"><?php echo __($success); ?></div>
         <?php endif; ?>
 
-        <form id="postForm" method="post" class="post-editor">
+        <form id="postForm" class="post-editor" method="post" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="title">Başlık</label>
-                <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($title ?? ''); ?>">
+                <label for="title"><?php echo __('title'); ?> *</label>
+                <input type="text" id="title" name="title" value="<?php echo isset($_POST['title']) ? htmlspecialchars($_POST['title']) : ''; ?>" required>
             </div>
 
             <div class="form-group">
-                <label for="categories">Kategoriler (virgülle ayırın)</label>
-                <input type="text" id="categories" name="categories" value="<?php echo htmlspecialchars($categories_input ?? ''); ?>">
-                <?php if (!empty($categories)): ?>
-                    <div class="category-suggestions">
-                        <?php foreach ($categories as $cat): ?>
-                            <span class="category-tag" onclick="addCategory('<?php echo htmlspecialchars($cat); ?>')"><?php echo htmlspecialchars($cat); ?></span>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
+                <label for="category"><?php echo __('categories'); ?> *</label>
+                <input type="text" id="category" name="category" value="<?php echo isset($_POST['category']) ? htmlspecialchars($_POST['category']) : ''; ?>" required>
+                <div class="category-suggestions">
+                    <?php foreach (getAllCategories() as $cat => $count): ?>
+                        <span class="category-tag" onclick="addCategory('<?php echo htmlspecialchars($cat); ?>')"><?php echo htmlspecialchars($cat); ?></span>
+                    <?php endforeach; ?>
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="tags">Etiketler (virgülle ayırın)</label>
-                <input type="text" id="tags" name="tags" value="<?php echo htmlspecialchars($tags ?? ''); ?>">
-                <?php if (!empty($allTags)): ?>
-                    <div class="tag-suggestions">
-                        <?php foreach ($allTags as $tag): ?>
-                            <span class="tag" onclick="addTag('<?php echo htmlspecialchars($tag); ?>')"><?php echo htmlspecialchars($tag); ?></span>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
+                <label for="tags"><?php echo __('tags'); ?></label>
+                <input type="text" id="tags" name="tags" value="<?php echo isset($_POST['tags']) ? htmlspecialchars($_POST['tags']) : ''; ?>">
+                <div class="tag-suggestions">
+                    <?php foreach (getAllTags() as $t => $count): ?>
+                        <span class="tag" onclick="addTag('<?php echo htmlspecialchars($t); ?>')"><?php echo htmlspecialchars($t); ?></span>
+                    <?php endforeach; ?>
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="content">İçerik</label>
-                <textarea id="content" name="content"><?php echo htmlspecialchars($content ?? ''); ?></textarea>
+                <label for="content"><?php echo __('content'); ?> *</label>
+                <textarea id="content" name="content" required><?php echo isset($_POST['content']) ? htmlspecialchars($_POST['content']) : ''; ?></textarea>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn-primary">Yayınla</button>
-                <a href="index.php" class="btn-secondary">İptal</a>
+                <button type="submit" class="btn-primary"><?php echo __('publish'); ?></button>
+                <a href="index.php" class="btn-secondary"><?php echo __('cancel'); ?></a>
             </div>
         </form>
     </main>
@@ -333,7 +335,7 @@ $pageTitle = "Yeni Blog Yazısı";
 
         // Kategori ekleme fonksiyonu
         function addCategory(category) {
-            var categoriesInput = document.getElementById('categories');
+            var categoriesInput = document.getElementById('category');
             var currentCategories = categoriesInput.value.split(',').map(t => t.trim()).filter(t => t);
 
             if (!currentCategories.includes(category)) {

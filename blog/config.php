@@ -26,6 +26,58 @@ define('ALLOWED_EXTENSIONS', ['jpg', 'jpeg', 'png', 'gif']);
 define('SITE_DESCRIPTION', 'Kişisel blog sayfamda teknoloji, yazılım ve güncel konular hakkında yazılar paylaşıyorum.');
 define('SITE_KEYWORDS', 'blog, teknoloji, yazılım, php, web geliştirme');
 
+// Dil ayarları
+define('DEFAULT_LANGUAGE', 'tr');
+define('LANGUAGES_DIR', __DIR__ . '/languages/');
+
+// Mevcut dili al
+function getCurrentLanguage()
+{
+    $lang = isset($_GET['lang']) ? $_GET['lang'] : (isset($_COOKIE['blog_lang']) ? $_COOKIE['blog_lang'] : DEFAULT_LANGUAGE);
+    if (!file_exists(LANGUAGES_DIR . $lang . '.php')) {
+        $lang = DEFAULT_LANGUAGE;
+    }
+    setcookie('blog_lang', $lang, time() + (86400 * 30), '/'); // 30 gün
+    return $lang;
+}
+
+// Dil dosyasını yükle
+function loadLanguage($lang = null)
+{
+    $lang = $lang ?: getCurrentLanguage();
+    $langFile = LANGUAGES_DIR . $lang . '.php';
+    if (file_exists($langFile)) {
+        return require $langFile;
+    }
+    return require LANGUAGES_DIR . DEFAULT_LANGUAGE . '.php';
+}
+
+// Çeviri fonksiyonu
+function __($key, ...$args)
+{
+    static $translations = null;
+    if ($translations === null) {
+        $translations = loadLanguage();
+    }
+    $text = isset($translations[$key]) ? $translations[$key] : $key;
+    if (!empty($args)) {
+        return sprintf($text, ...$args);
+    }
+    return $text;
+}
+
+// Dil değiştirme linkini oluştur
+function getLanguageUrl($lang)
+{
+    $url = $_SERVER['REQUEST_URI'];
+    if (strpos($url, 'lang=') !== false) {
+        $url = preg_replace('/lang=[^&]+/', 'lang=' . $lang, $url);
+    } else {
+        $url .= (strpos($url, '?') === false ? '?' : '&') . 'lang=' . $lang;
+    }
+    return $url;
+}
+
 /**
  * Tüm kategorileri getir
  * @return array

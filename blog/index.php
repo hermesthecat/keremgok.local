@@ -54,14 +54,20 @@ $parsedown->setSafeMode(true);
 <body>
     <main class="blog-container">
         <div class="blog-header">
-            <h1>Blog Yazıları</h1>
-            <a href="new-post.php" class="btn-primary">Yeni Yazı</a>
+            <h1><?php echo __('site_title'); ?></h1>
+            <div class="header-actions">
+                <div class="language-switcher">
+                    <a href="<?php echo getLanguageUrl('tr'); ?>" class="<?php echo getCurrentLanguage() === 'tr' ? 'active' : ''; ?>">TR</a>
+                    <a href="<?php echo getLanguageUrl('en'); ?>" class="<?php echo getCurrentLanguage() === 'en' ? 'active' : ''; ?>">EN</a>
+                </div>
+                <a href="new-post.php" class="btn-primary"><?php echo __('new_post'); ?></a>
+            </div>
         </div>
 
         <!-- Kategori ve Etiket Menüsü -->
         <aside class="blog-sidebar">
             <div class="categories">
-                <h3>Kategoriler</h3>
+                <h3><i class="fas fa-folder"></i> <?php echo __('categories'); ?></h3>
                 <ul>
                     <?php
                     $categories = getAllCategories();
@@ -75,7 +81,7 @@ $parsedown->setSafeMode(true);
             </div>
 
             <div class="tags">
-                <h3>Etiketler</h3>
+                <h3><i class="fas fa-tags"></i> <?php echo __('tags'); ?></h3>
                 <div class="tag-cloud">
                     <?php
                     $tags = getAllTags();
@@ -96,10 +102,10 @@ $parsedown->setSafeMode(true);
             // Blog yazılarını getir
             if ($category) {
                 $posts = getPostsByCategory($category, $page);
-                echo '<div class="filter-info">Kategori: ' . htmlspecialchars($category) . '</div>';
+                echo '<div class="filter-info">' . __('category_filter', htmlspecialchars($category)) . '</div>';
             } elseif ($tag) {
                 $posts = getPostsByTag($tag, $page);
-                echo '<div class="filter-info">Etiket: ' . htmlspecialchars($tag) . '</div>';
+                echo '<div class="filter-info">' . __('tag_filter', htmlspecialchars($tag)) . '</div>';
             } else {
                 $posts = getBlogPosts($page);
             }
@@ -109,8 +115,8 @@ $parsedown->setSafeMode(true);
                     echo '<article class="blog-post" id="post-' . $post['id'] . '">';
                     echo '<h2><a href="' . getPostUrl($post['id'], $post['title']) . '">' . htmlspecialchars($post['title']) . '</a></h2>';
                     echo '<div class="post-meta">';
-                    echo '<span class="post-date">' . date('d.m.Y', strtotime($post['created_at'])) . '</span>';
-                    echo '<span class="post-author">' . htmlspecialchars($post['author']) . '</span>';
+                    echo '<span class="post-author"><i class="fas fa-user"></i> ' . __('author') . ': ' . htmlspecialchars($post['author']) . '</span>';
+                    echo '<span class="post-date"><i class="fas fa-calendar"></i> ' . __('date') . ': ' . date('d.m.Y', strtotime($post['created_at'])) . '</span>';
                     if (isset($post['category'])) {
                         $categories = is_array($post['category']) ? $post['category'] : [$post['category']];
                         foreach ($categories as $cat) {
@@ -134,8 +140,8 @@ $parsedown->setSafeMode(true);
                         echo '</div>';
                     }
                     echo '<div class="post-actions">';
-                    echo '<a href="' . getPostUrl($post['id'], $post['title']) . '" class="read-more">Devamını Oku</a>';
-                    echo '<a href="edit-post.php?id=' . $post['id'] . '" class="edit-post">Düzenle</a>';
+                    echo '<a href="' . getPostUrl($post['id'], $post['title']) . '" class="read-more">' . __('read_more') . '</a>';
+                    echo '<a href="edit-post.php?id=' . $post['id'] . '" class="edit-post">' . __('edit') . '</a>';
                     echo '</div>';
                     echo '</article>';
                 }
@@ -150,7 +156,7 @@ $parsedown->setSafeMode(true);
                     // Önceki sayfa
                     if ($page > 1) {
                         $prevPage = $page - 1;
-                        echo '<a href="' . getPageUrl($prevPage) . '" class="page-link">← Önceki</a>';
+                        echo '<a href="' . getPageUrl($prevPage) . '" class="page-link">← ' . __('previous') . '</a>';
                     }
 
                     // Sayfa numaraları
@@ -162,13 +168,13 @@ $parsedown->setSafeMode(true);
                     // Sonraki sayfa
                     if ($page < $totalPages) {
                         $nextPage = $page + 1;
-                        echo '<a href="' . getPageUrl($nextPage) . '" class="page-link">Sonraki →</a>';
+                        echo '<a href="' . getPageUrl($nextPage) . '" class="page-link">' . __('next') . ' →</a>';
                     }
 
                     echo '</div>';
                 }
             } else {
-                echo '<p class="no-posts">Henüz blog yazısı bulunmamaktadır.</p>';
+                echo '<p class="no-posts">' . __('no_posts') . '</p>';
             }
             ?>
         </section>

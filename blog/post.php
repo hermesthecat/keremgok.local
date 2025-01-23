@@ -76,14 +76,23 @@ $pageTitle = $post['title'] . " - Blog";
 <body>
     <main class="blog-container">
         <div class="blog-header">
-            <h1>Blog</h1>
-            <a href="new-post.php" class="btn-primary">Yeni Yazı</a>
+            <h1><?php echo __('site_title'); ?></h1>
+            <div class="header-actions">
+                <div class="language-switcher">
+                    <a href="<?php echo getLanguageUrl('tr'); ?>" class="<?php echo getCurrentLanguage() === 'tr' ? 'active' : ''; ?>">TR</a>
+                    <a href="<?php echo getLanguageUrl('en'); ?>" class="<?php echo getCurrentLanguage() === 'en' ? 'active' : ''; ?>">EN</a>
+                </div>
+                <nav>
+                    <a href="index.php" class="btn-secondary"><?php echo __('back_to_blog'); ?></a>
+                    <a href="new-post.php" class="btn-primary"><?php echo __('new_post'); ?></a>
+                </nav>
+            </div>
         </div>
 
         <!-- Kategori ve Etiket Menüsü -->
         <aside class="blog-sidebar">
             <div class="categories">
-                <h3><i class="fas fa-folder"></i> Kategoriler</h3>
+                <h3><i class="fas fa-folder"></i> <?php echo __('categories'); ?></h3>
                 <ul>
                     <?php
                     $categories = getAllCategories();
@@ -97,7 +106,7 @@ $pageTitle = $post['title'] . " - Blog";
             </div>
 
             <div class="tags">
-                <h3>Etiketler</h3>
+                <h3><i class="fas fa-tags"></i> <?php echo __('tags'); ?></h3>
                 <div class="tag-cloud">
                     <?php
                     $tags = getAllTags();
@@ -117,12 +126,13 @@ $pageTitle = $post['title'] . " - Blog";
             <div class="post-header">
                 <h1><?php echo htmlspecialchars($post['title']); ?></h1>
                 <div class="post-meta">
-                    <span class="post-author"> <?php echo htmlspecialchars($post['author']); ?></span>
-                    <span class="post-date"> <?php echo date('d.m.Y', strtotime($post['created_at'])); ?></span>
+                    <span class="post-author"><i class="fas fa-user"></i> <?php echo __('author'); ?>: <?php echo htmlspecialchars(AUTHOR_NAME); ?></span>
+                    <span class="post-date"><i class="fas fa-calendar"></i> <?php echo __('date'); ?>: <?php echo date('d.m.Y', strtotime($post['created_at'])); ?></span>
                     <?php if (isset($post['category'])):
                         $categories = is_array($post['category']) ? $post['category'] : [$post['category']];
                         foreach ($categories as $cat): ?>
                             <span class="post-category">
+                                <i class="fas fa-folder"></i> <?php echo __('category'); ?>: 
                                 <a href="<?php echo getCategoryUrl(trim($cat)); ?>">
                                     <?php echo htmlspecialchars(trim($cat)); ?>
                                 </a>
@@ -150,18 +160,19 @@ $pageTitle = $post['title'] . " - Blog";
                 echo $content;
                 ?>
             </div>
-            <?php if (!empty($post['tags'])): ?>
+            <?php if (isset($post['tags']) && !empty($post['tags'])): ?>
                 <div class="post-tags">
+                    <i class="fas fa-tags"></i> <?php echo __('tags'); ?>:
                     <?php foreach ($post['tags'] as $tag): ?>
                         <a href="<?php echo getTagUrl($tag); ?>" class="tag">
-                            <i class="fas fa-tag"></i> <?php echo htmlspecialchars($tag); ?>
+                            <?php echo htmlspecialchars($tag); ?>
                         </a>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
-            <div class="post-navigation">
-                <a href="index.php" class="btn-secondary">Blog'a Dön</a>
-                <a href="edit-post.php?id=<?php echo $postId; ?>" class="btn-primary">Düzenle</a>
+            <div class="post-actions">
+                <a href="index.php" class="btn-secondary"><?php echo __('back_to_blog'); ?></a>
+                <a href="edit-post.php?id=<?php echo $postId; ?>" class="btn-primary"><?php echo __('edit'); ?></a>
             </div>
         </article>
     </main>
