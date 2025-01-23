@@ -21,6 +21,116 @@ define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
 define('ALLOWED_EXTENSIONS', ['jpg', 'jpeg', 'png', 'gif']);
 
 /**
+ * Tüm kategorileri getir
+ * @return array
+ */
+function getAllCategories() {
+    $categories = [];
+    $files = glob(POSTS_DIR . '*.md');
+    
+    foreach ($files as $file) {
+        $content = file_get_contents($file);
+        $post = parseMarkdown($content);
+        if (isset($post['category'])) {
+            $categories[$post['category']] = isset($categories[$post['category']]) 
+                ? $categories[$post['category']] + 1 
+                : 1;
+        }
+    }
+    
+    arsort($categories); // Yazı sayısına göre sırala
+    return $categories;
+}
+
+/**
+ * Tüm etiketleri getir
+ * @return array
+ */
+function getAllTags() {
+    $tags = [];
+    $files = glob(POSTS_DIR . '*.md');
+    
+    foreach ($files as $file) {
+        $content = file_get_contents($file);
+        $post = parseMarkdown($content);
+        if (isset($post['tags'])) {
+            $postTags = is_array($post['tags']) ? $post['tags'] : explode(',', str_replace(['[', ']', ' '], '', $post['tags']));
+            foreach ($postTags as $tag) {
+                $tags[$tag] = isset($tags[$tag]) ? $tags[$tag] + 1 : 1;
+            }
+        }
+    }
+    
+    arsort($tags); // Kullanım sayısına göre sırala
+    return $tags;
+}
+
+/**
+ * Kategoriye göre yazıları getir
+ * @param string $category
+ * @param int $page
+ * @param int $limit
+ * @return array
+ */
+function getPostsByCategory($category, $page = 1, $limit = POSTS_PER_PAGE) {
+    $posts = [];
+    $files = glob(POSTS_DIR . '*.md');
+    
+    foreach ($files as $file) {
+        $content = file_get_contents($file);
+        $post = parseMarkdown($content);
+        if (isset($post['category']) && $post['category'] === $category) {
+            $post['id'] = basename($file, '.md');
+            $post['created_at'] = date('Y-m-d H:i:s', filemtime($file));
+            $posts[] = $post;
+        }
+    }
+    
+    // Tarihe göre sırala
+    usort($posts, function($a, $b) {
+        return strtotime($b['created_at']) - strtotime($a['created_at']);
+    });
+    
+    // Sayfalama
+    $offset = ($page - 1) * $limit;
+    return array_slice($posts, $offset, $limit);
+}
+
+/**
+ * Etikete göre yazıları getir
+ * @param string $tag
+ * @param int $page
+ * @param int $limit
+ * @return array
+ */
+function getPostsByTag($tag, $page = 1, $limit = POSTS_PER_PAGE) {
+    $posts = [];
+    $files = glob(POSTS_DIR . '*.md');
+    
+    foreach ($files as $file) {
+        $content = file_get_contents($file);
+        $post = parseMarkdown($content);
+        if (isset($post['tags'])) {
+            $postTags = is_array($post['tags']) ? $post['tags'] : explode(',', str_replace(['[', ']', ' '], '', $post['tags']));
+            if (in_array($tag, $postTags)) {
+                $post['id'] = basename($file, '.md');
+                $post['created_at'] = date('Y-m-d H:i:s', filemtime($file));
+                $posts[] = $post;
+            }
+        }
+    }
+    
+    // Tarihe göre sırala
+    usort($posts, function($a, $b) {
+        return strtotime($b['created_at']) - strtotime($a['created_at']);
+    });
+    
+    // Sayfalama
+    $offset = ($page - 1) * $limit;
+    return array_slice($posts, $offset, $limit);
+}
+
+/**
  * Blog yazılarını getir
  * @param int $page Sayfa numarası
  * @param int $limit Sayfa başına gösterilecek yazı sayısı
@@ -61,7 +171,9 @@ function parseMarkdown($content) {
         'title' => '',
         'author' => '',
         'excerpt' => '',
-        'content' => ''
+        'content' => '',
+        'category' => '',
+        'tags' => []
     ];
     
     // YAML front matter'ı parse et
@@ -85,7 +197,14 @@ function parseMarkdown($content) {
             if (count($parts) === 2) {
                 $key = trim($parts[0]);
                 $value = trim($parts[1]);
-                $post[$key] = $value;
+                
+                // Etiketleri dizi olarak işle
+                if ($key === 'tags') {
+                    $value = str_replace(['[', ']', ' '], '', $value);
+                    $post[$key] = explode(',', $value);
+                } else {
+                    $post[$key] = $value;
+                }
             }
         }
         

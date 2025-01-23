@@ -3,6 +3,15 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 2rem;
+}
+
+.blog-sidebar {
+    position: sticky;
+    top: 2rem;
+    align-self: start;
 }
 
 .blog-posts {
@@ -35,9 +44,10 @@
     margin-bottom: 1rem;
     font-size: 0.9rem;
     color: var(--text-secondary);
+    flex-wrap: wrap;
 }
 
-.post-date, .post-author {
+.post-date, .post-author, .post-category {
     display: inline-flex;
     align-items: center;
 }
@@ -50,6 +60,44 @@
 .post-author::before {
     content: "👤";
     margin-right: 0.5rem;
+}
+
+.post-category::before {
+    content: "📁";
+    margin-right: 0.5rem;
+}
+
+.post-category a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.post-category a:hover {
+    color: var(--primary-color);
+}
+
+.post-tags {
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tag {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    background: var(--bg-tag);
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.tag:hover, .tag.active {
+    background: var(--primary-color);
+    color: white;
 }
 
 .blog-post p {
@@ -78,6 +126,57 @@
     font-style: italic;
     grid-column: 1 / -1;
     padding: 2rem;
+}
+
+/* Kategori ve Etiket Stilleri */
+.categories h3, .tags h3 {
+    margin: 0 0 1rem;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+}
+
+.categories {
+    margin-bottom: 2rem;
+}
+
+.categories ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.categories li {
+    margin-bottom: 0.5rem;
+}
+
+.categories a {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.categories a:hover, .categories a.active {
+    background: var(--bg-secondary);
+    color: var(--primary-color);
+}
+
+.tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-info {
+    grid-column: 1 / -1;
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 4px;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
 }
 
 /* Tekil Yazı Sayfası Stilleri */
@@ -158,7 +257,13 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .blog-container {
+        grid-template-columns: 1fr;
         padding: 1rem;
+    }
+    
+    .blog-sidebar {
+        position: static;
+        margin-bottom: 2rem;
     }
     
     .blog-posts {
@@ -175,5 +280,9 @@
     
     .full-post .post-content {
         font-size: 1rem;
+    }
+    
+    .tag-cloud {
+        justify-content: center;
     }
 } 

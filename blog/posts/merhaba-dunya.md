@@ -2,6 +2,8 @@
 title: Merhaba Dünya
 author: A. Kerem Gök
 date: 2024-01-23
+category: Genel
+tags: [markdown, blog, php]
 ---
 
 Bu benim ilk blog yazım. Markdown formatında yazılmış bir blog yazısı örneği.
