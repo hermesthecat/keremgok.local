@@ -126,8 +126,11 @@ $pageTitle = "Yazıyı Düzenle: " . $title;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle; ?></title>
     <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
     <link rel="stylesheet" href="blog.css">
     <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/php.min.js"></script>
     <script src="blog.js" defer></script>
 </head>
 
@@ -196,37 +199,101 @@ $pageTitle = "Yazıyı Düzenle: " . $title;
         var easyMDE = new EasyMDE({
             element: document.getElementById('content'),
             spellChecker: false,
-            status: ['lines', 'words'],
+            status: ['lines', 'words', 'cursor'],
             uploadImage: true,
             imageUploadEndpoint: 'edit-post.php?id=<?php echo $postId; ?>',
             imageMaxSize: <?php echo MAX_FILE_SIZE; ?>,
             imageAccept: '<?php echo '.' . implode(',.', ALLOWED_EXTENSIONS); ?>',
             toolbar: [
-                'bold', 'italic', 'heading', '|',
-                'quote', 'unordered-list', 'ordered-list', '|',
+                'bold', 'italic', 'heading', 'strikethrough', '|',
+                'quote', 'code', 'unordered-list', 'ordered-list', '|',
                 'link', 'upload-image', '|',
+                {
+                    name: "table",
+                    action: EasyMDE.drawTable,
+                    className: "fa fa-table",
+                    title: "Tablo Ekle",
+                },
+                {
+                    name: "emoji",
+                    action: function(editor) {
+                        const emojiList = ["😀", "😃", "😄", "😁", "😅", "😂", "🤣", "😊", "😇",
+                            "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙",
+                            "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓",
+                            "😎", "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕",
+                            "🙁", "☹️", "😣", "😖", "😫", "😩", "🥺", "😢", "😭"
+                        ];
+
+                        // Emoji seçici oluştur
+                        const picker = document.createElement('div');
+                        picker.className = 'emoji-picker';
+                        picker.style.position = 'absolute';
+                        picker.style.backgroundColor = 'white';
+                        picker.style.border = '1px solid #ddd';
+                        picker.style.borderRadius = '4px';
+                        picker.style.padding = '10px';
+                        picker.style.display = 'grid';
+                        picker.style.gridTemplateColumns = 'repeat(10, 1fr)';
+                        picker.style.gap = '5px';
+                        picker.style.zIndex = '1000';
+
+                        // Emojileri ekle
+                        emojiList.forEach(emoji => {
+                            const btn = document.createElement('button');
+                            btn.textContent = emoji;
+                            btn.style.border = 'none';
+                            btn.style.background = 'none';
+                            btn.style.cursor = 'pointer';
+                            btn.style.fontSize = '20px';
+                            btn.onclick = () => {
+                                const pos = editor.codemirror.getCursor();
+                                editor.codemirror.replaceRange(emoji, pos);
+                                picker.remove();
+                            };
+                            picker.appendChild(btn);
+                        });
+
+                        // Editörün üzerine yerleştir
+                        const toolbar = editor.gui.toolbar;
+                        toolbar.appendChild(picker);
+
+                        // Dışarı tıklandığında kapat
+                        document.addEventListener('click', function closeEmoji(e) {
+                            if (!picker.contains(e.target)) {
+                                picker.remove();
+                                document.removeEventListener('click', closeEmoji);
+                            }
+                        });
+                    },
+                    className: "fa fa-smile-o",
+                    title: "Emoji Ekle",
+                },
+                '|',
                 'preview', 'side-by-side', 'fullscreen', '|',
                 'guide'
             ],
-            imageUploadFunction: function(file, onSuccess, onError) {
-                var formData = new FormData();
-                formData.append('image', file);
+            previewRender: function(plainText, preview) {
+                // Özel önizleme işleme
+                setTimeout(function() {
+                    preview.innerHTML = this.parent.markdown(plainText);
 
-                fetch('edit-post.php?id=<?php echo $postId; ?>', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(result => {
-                        if (result.success) {
-                            onSuccess(result.file.url);
-                        } else {
-                            onError(result.message);
-                        }
-                    })
-                    .catch(error => {
-                        onError('Dosya yüklenirken bir hata oluştu.');
+                    // Kod bloklarına syntax highlighting ekle
+                    preview.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightElement(block);
                     });
+                }.bind(this), 0);
+
+                return "Yükleniyor...";
+            },
+            renderingConfig: {
+                singleLineBreaks: false,
+                codeSyntaxHighlighting: true,
+            },
+            tabSize: 4,
+            promptURLs: true,
+            promptTexts: {
+                image: "Görsel URL'si girin:",
+                link: "Bağlantı URL'si girin:"
             }
         });
 
