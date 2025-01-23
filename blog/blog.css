@@ -80,6 +80,81 @@
     padding: 2rem;
 }
 
+/* Tekil Yazı Sayfası Stilleri */
+.full-post {
+    max-width: 800px;
+    margin: 0 auto;
+    transform: none !important;
+}
+
+.full-post h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.full-post .post-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin: 2rem 0;
+}
+
+.full-post .post-content h2 {
+    font-size: 1.8rem;
+    margin: 2rem 0 1rem;
+}
+
+.full-post .post-content h3 {
+    font-size: 1.4rem;
+    margin: 1.5rem 0 1rem;
+}
+
+.full-post .post-content p {
+    margin-bottom: 1.5rem;
+}
+
+.full-post .post-content pre {
+    background: var(--bg-code);
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+}
+
+.full-post .post-content code {
+    font-family: monospace;
+    background: var(--bg-code);
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+}
+
+.full-post .post-content ul,
+.full-post .post-content ol {
+    margin: 1rem 0 1rem 2rem;
+}
+
+.full-post .post-content li {
+    margin-bottom: 0.5rem;
+}
+
+.post-navigation {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.back-to-blog {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.back-to-blog:hover {
+    color: var(--primary-color);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .blog-container {
@@ -92,5 +167,13 @@
     
     .blog-post h2 {
         font-size: 1.3rem;
+    }
+    
+    .full-post h1 {
+        font-size: 2rem;
+    }
+    
+    .full-post .post-content {
+        font-size: 1rem;
     }
 } 

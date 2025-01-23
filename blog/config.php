@@ -6,38 +6,19 @@
  * @version 1.0
  */
 
-// Veritabanı bağlantı bilgileri
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'blog_db');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Parsedown'u dahil et
+require_once __DIR__ . '/Parsedown.php';
 
 // Site ayarları
 define('SITE_TITLE', 'Blog');
 define('POSTS_PER_PAGE', 10);
 define('EXCERPT_LENGTH', 200);
+define('POSTS_DIR', __DIR__ . '/posts/');
 
 // Dosya yükleme ayarları
 define('UPLOAD_DIR', 'uploads/');
 define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
 define('ALLOWED_EXTENSIONS', ['jpg', 'jpeg', 'png', 'gif']);
-
-/**
- * Veritabanı bağlantısını oluştur
- * @return PDO
- */
-function getDB() {
-    try {
-        $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
-        $db = new PDO($dsn, DB_USER, DB_PASS);
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        return $db;
-    } catch (PDOException $e) {
-        error_log("Veritabanı bağlantı hatası: " . $e->getMessage());
-        die("Veritabanına bağlanılamadı. Lütfen daha sonra tekrar deneyiniz.");
-    }
-}
 
 /**
  * Blog yazılarını getir
@@ -46,28 +27,82 @@ function getDB() {
  * @return array
  */
 function getBlogPosts($page = 1, $limit = POSTS_PER_PAGE) {
-    try {
-        $db = getDB();
-        $offset = ($page - 1) * $limit;
-        
-        $stmt = $db->prepare("
-            SELECT posts.*, users.username as author
-            FROM posts 
-            JOIN users ON posts.author_id = users.id
-            WHERE posts.status = 'published'
-            ORDER BY posts.created_at DESC
-            LIMIT :limit OFFSET :offset
-        ");
-        
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-        $stmt->execute();
-        
-        return $stmt->fetchAll();
-    } catch (PDOException $e) {
-        error_log("Blog yazıları getirme hatası: " . $e->getMessage());
-        return [];
+    $posts = [];
+    $files = glob(POSTS_DIR . '*.md');
+    
+    // Dosyaları tarihe göre sırala (en yeni en üstte)
+    usort($files, function($a, $b) {
+        return filemtime($b) - filemtime($a);
+    });
+    
+    // Sayfalama
+    $offset = ($page - 1) * $limit;
+    $files = array_slice($files, $offset, $limit);
+    
+    foreach ($files as $file) {
+        $content = file_get_contents($file);
+        $post = parseMarkdown($content);
+        $post['id'] = basename($file, '.md');
+        $post['created_at'] = date('Y-m-d H:i:s', filemtime($file));
+        $posts[] = $post;
     }
+    
+    return $posts;
+}
+
+/**
+ * Markdown içeriğini parse et
+ * @param string $content
+ * @return array
+ */
+function parseMarkdown($content) {
+    $lines = explode("\n", $content);
+    $post = [
+        'title' => '',
+        'author' => '',
+        'excerpt' => '',
+        'content' => ''
+    ];
+    
+    // YAML front matter'ı parse et
+    $yamlStart = false;
+    $contentStart = false;
+    $contentLines = [];
+    
+    foreach ($lines as $line) {
+        if (trim($line) === '---') {
+            if (!$yamlStart) {
+                $yamlStart = true;
+                continue;
+            } else {
+                $contentStart = true;
+                continue;
+            }
+        }
+        
+        if (!$contentStart && $yamlStart) {
+            $parts = explode(':', $line, 2);
+            if (count($parts) === 2) {
+                $key = trim($parts[0]);
+                $value = trim($parts[1]);
+                $post[$key] = $value;
+            }
+        }
+        
+        if ($contentStart) {
+            $contentLines[] = $line;
+        }
+    }
+    
+    // Parsedown kullanarak içeriği HTML'e dönüştür
+    $parsedown = new Parsedown();
+    $parsedown->setSafeMode(true);
+    
+    $content = implode("\n", $contentLines);
+    $post['content'] = $parsedown->text($content);
+    $post['excerpt'] = createExcerpt(strip_tags($post['content']));
+    
+    return $post;
 }
 
 /**

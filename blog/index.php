@@ -12,6 +12,10 @@ require_once 'config.php';
 // Sayfa başlığı
 $pageTitle = "Blog";
 
+// Parsedown örneği oluştur
+$parsedown = new Parsedown();
+$parsedown->setSafeMode(true);
+
 // Header'ı dahil et
 include_once '../header.php';
 ?>
@@ -29,6 +33,12 @@ include_once '../header.php';
 <body>
     <main class="blog-container">
         <h1>Blog Yazıları</h1>
+        
+        <!-- Arama kutusu -->
+        <div class="search-container">
+            <input type="text" class="blog-search" placeholder="Blog yazılarında ara...">
+        </div>
+        
         <section class="blog-posts">
             <?php
             // Blog yazılarını getir
@@ -36,13 +46,13 @@ include_once '../header.php';
             
             if ($posts) {
                 foreach ($posts as $post) {
-                    echo '<article class="blog-post">';
+                    echo '<article class="blog-post" id="post-' . $post['id'] . '">';
                     echo '<h2>' . htmlspecialchars($post['title']) . '</h2>';
                     echo '<div class="post-meta">';
                     echo '<span class="post-date">' . date('d.m.Y', strtotime($post['created_at'])) . '</span>';
                     echo '<span class="post-author">' . htmlspecialchars($post['author']) . '</span>';
                     echo '</div>';
-                    echo '<p>' . htmlspecialchars($post['excerpt']) . '</p>';
+                    echo '<div class="post-excerpt">' . $post['excerpt'] . '</div>';
                     echo '<a href="post.php?id=' . $post['id'] . '" class="read-more">Devamını Oku</a>';
                     echo '</article>';
                 }
