@@ -17,128 +17,93 @@ $success = '';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// POST verilerini kontrol et
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Debug için
-    error_log("POST verileri: " . print_r($_POST, true));
-    
+// Dosya yükleme işlemi için AJAX endpoint
+if (isset($_FILES['image']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json');
+    try {
+        $file = $_FILES['image'];
+        if (isValidUpload($file)) {
+            $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $newFileName = uniqid() . '.' . $extension;
+            
+            if (!file_exists(UPLOAD_DIR)) {
+                mkdir(UPLOAD_DIR, 0777, true);
+            }
+            
+            $destination = UPLOAD_DIR . $newFileName;
+            if (move_uploaded_file($file['tmp_name'], $destination)) {
+                echo json_encode(['success' => 1, 'file' => ['url' => $destination]]);
+                exit;
+            }
+        }
+        echo json_encode(['success' => 0, 'message' => 'Dosya yüklenemedi.']);
+        exit;
+    } catch (Exception $e) {
+        echo json_encode(['success' => 0, 'message' => $e->getMessage()]);
+        exit;
+    }
+}
+
+// Form gönderildi mi kontrol et
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_FILES['image'])) {
     $title = trim($_POST['title'] ?? '');
     $content = trim($_POST['content'] ?? '');
     $category = trim($_POST['category'] ?? '');
     $tags = trim($_POST['tags'] ?? '');
-    
-    // Debug için
-    error_log("İşlenen veriler:");
-    error_log("Başlık: $title");
-    error_log("İçerik: $content");
-    error_log("Kategori: $category");
-    error_log("Etiketler: $tags");
-    
-    if (!$title) {
-        $error = 'Başlık boş olamaz.';
-    } elseif (!$content) {
-        $error = 'İçerik boş olamaz.';
-    } elseif (!$category) {
-        $error = 'Kategori boş olamaz.';
-    } elseif (!$tags) {
-        $error = 'En az bir etiket ekleyin.';
+
+    // Validasyon
+    if (empty($title)) {
+        $error = 'Başlık alanı zorunludur.';
+    } elseif (empty($content)) {
+        $error = 'İçerik alanı zorunludur.';
+    } elseif (empty($category)) {
+        $error = 'Kategori alanı zorunludur.';
     } else {
         try {
-            // Dosya yükleme işlemi
-            $uploadedFiles = [];
-            if (!empty($_FILES['files']['name'][0])) {
-                if (!file_exists(UPLOAD_DIR)) {
-                    mkdir(UPLOAD_DIR, 0777, true);
-                }
-
-                foreach ($_FILES['files']['tmp_name'] as $key => $tmp_name) {
-                    $file = [
-                        'name' => $_FILES['files']['name'][$key],
-                        'type' => $_FILES['files']['type'][$key],
-                        'tmp_name' => $tmp_name,
-                        'error' => $_FILES['files']['error'][$key],
-                        'size' => $_FILES['files']['size'][$key]
-                    ];
-
-                    if (isValidUpload($file)) {
-                        $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-                        $newFileName = uniqid() . '.' . $extension;
-                        $destination = UPLOAD_DIR . $newFileName;
-                        
-                        if (move_uploaded_file($file['tmp_name'], $destination)) {
-                            $uploadedFiles[] = $newFileName;
-                        }
-                    }
-                }
-            }
-
-            // Dosya adını oluştur
+            // Slug oluştur
             $slug = createSlug($title);
-            $filename = $slug . '.md';
-            $filepath = POSTS_DIR . $filename;
-            
-            // Debug için
-            error_log("Oluşturulacak dosya: $filepath");
-            
-            // Dosya zaten varsa slug'a sayı ekle
+            $baseSlug = $slug;
             $counter = 1;
-            while (file_exists($filepath)) {
-                $filename = $slug . '-' . $counter . '.md';
-                $filepath = POSTS_DIR . $filename;
+            
+            while (file_exists(POSTS_DIR . $slug . '.md')) {
+                $slug = $baseSlug . '-' . $counter;
                 $counter++;
             }
-            
-            // Markdown içeriğini oluştur
+
+            // Markdown içeriği oluştur
             $markdown = "---\n";
             $markdown .= "title: " . $title . "\n";
             $markdown .= "author: " . AUTHOR_NAME . "\n";
-            $markdown .= "date: " . date('Y-m-d') . "\n";
             $markdown .= "category: " . $category . "\n";
-            $markdown .= "tags: [" . $tags . "]\n";
             
-            // Yüklenen dosyaları içeriğe ekle
-            if (!empty($uploadedFiles)) {
-                $markdown .= "files: [" . implode(',', $uploadedFiles) . "]\n";
+            if (!empty($tags)) {
+                $tagArray = array_map('trim', explode(',', $tags));
+                $markdown .= "tags: [" . implode(',', $tagArray) . "]\n";
             }
             
             $markdown .= "---\n\n";
             $markdown .= $content;
-            
-            // Debug için
-            error_log("Oluşturulan markdown:");
-            error_log($markdown);
-            
-            // posts klasörünü kontrol et ve oluştur
-            if (!file_exists(POSTS_DIR)) {
-                error_log("Posts klasörü oluşturuluyor...");
-                if (!mkdir(POSTS_DIR, 0777, true)) {
-                    throw new Exception('Posts klasörü oluşturulamadı.');
-                }
-            }
-            
+
             // Dosyayı kaydet
-            if (file_put_contents($filepath, $markdown) === false) {
-                throw new Exception('Dosya kaydedilemedi.');
+            if (file_put_contents(POSTS_DIR . $slug . '.md', $markdown)) {
+                $success = 'Blog yazısı başarıyla yayınlandı.';
+                // Formu temizle
+                $title = $content = $category = $tags = '';
+            } else {
+                $error = 'Yazı kaydedilirken bir hata oluştu.';
             }
-            
-            error_log("Dosya başarıyla kaydedildi: $filepath");
-            
-            $success = 'Yazı başarıyla yayınlandı!';
-            header('Location: post.php?id=' . basename($filename, '.md'));
-            exit;
         } catch (Exception $e) {
-            error_log("Hata oluştu: " . $e->getMessage());
-            $error = 'Hata: ' . $e->getMessage();
+            $error = 'Bir hata oluştu: ' . $e->getMessage();
         }
     }
 }
 
-// Mevcut kategorileri al
-$categories = getAllCategories();
-$allTags = getAllTags();
+// Mevcut kategorileri ve etiketleri al
+$categories = array_keys(getAllCategories());
+$allTags = array_keys(getAllTags());
 
 // Sayfa başlığı
-$pageTitle = "Yeni Yazı - Blog";
+$pageTitle = "Yeni Blog Yazısı";
 ?>
 
 <!DOCTYPE html>
@@ -147,152 +112,109 @@ $pageTitle = "Yeni Yazı - Blog";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($pageTitle); ?></title>
+    <title><?php echo $pageTitle; ?></title>
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
     <link rel="stylesheet" href="blog.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
     <script src="blog.js" defer></script>
 </head>
 
 <body>
     <main class="blog-container editor-page">
-        <h1>Yeni Blog Yazısı</h1>
-        
+        <div class="blog-header">
+            <h1><?php echo $pageTitle; ?></h1>
+            <a href="index.php" class="btn-secondary">Blog'a Dön</a>
+        </div>
+
         <?php if ($error): ?>
-            <div class="alert alert-error">
-                <?php echo htmlspecialchars($error); ?>
-            </div>
+            <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
-        
+
         <?php if ($success): ?>
-            <div class="alert alert-success">
-                <?php echo htmlspecialchars($success); ?>
-            </div>
+            <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
         <?php endif; ?>
-        
-        <form method="post" class="post-editor" id="postForm" onsubmit="return submitForm(event)">
+
+        <form id="postForm" method="post" class="post-editor">
             <div class="form-group">
                 <label for="title">Başlık</label>
-                <input type="text" id="title" name="title" required value="<?php echo htmlspecialchars($_POST['title'] ?? ''); ?>">
+                <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($title ?? ''); ?>">
             </div>
-            
+
             <div class="form-group">
                 <label for="category">Kategori</label>
-                <input type="text" id="category" name="category" list="categories" required value="<?php echo htmlspecialchars($_POST['category'] ?? ''); ?>">
-                <datalist id="categories">
-                    <?php foreach ($categories as $cat => $count): ?>
+                <input type="text" id="category" name="category" value="<?php echo htmlspecialchars($category ?? ''); ?>" list="categoryList">
+                <datalist id="categoryList">
+                    <?php foreach ($categories as $cat): ?>
                         <option value="<?php echo htmlspecialchars($cat); ?>">
                     <?php endforeach; ?>
                 </datalist>
             </div>
-            
+
             <div class="form-group">
                 <label for="tags">Etiketler (virgülle ayırın)</label>
-                <input type="text" id="tags" name="tags" required value="<?php echo htmlspecialchars($_POST['tags'] ?? ''); ?>">
+                <input type="text" id="tags" name="tags" value="<?php echo htmlspecialchars($tags ?? ''); ?>">
+                <?php if (!empty($allTags)): ?>
                 <div class="tag-suggestions">
-                    <?php foreach ($allTags as $tag => $count): ?>
-                        <span class="tag" onclick="addTag(this.textContent)">
-                            <?php echo htmlspecialchars($tag); ?>
-                        </span>
+                    <?php foreach ($allTags as $tag): ?>
+                        <span class="tag" onclick="addTag('<?php echo htmlspecialchars($tag); ?>')"><?php echo htmlspecialchars($tag); ?></span>
                     <?php endforeach; ?>
                 </div>
+                <?php endif; ?>
             </div>
-            
-            <div class="form-group">
-                <label for="files">Dosya Yükle (Maksimum boyut: <?php echo MAX_FILE_SIZE / 1024 / 1024; ?>MB)</label>
-                <input type="file" id="files" name="files[]" multiple accept="<?php echo '.'.implode(',.', ALLOWED_EXTENSIONS); ?>">
-                <small class="file-info">İzin verilen dosya türleri: <?php echo implode(', ', ALLOWED_EXTENSIONS); ?></small>
-            </div>
-            
+
             <div class="form-group">
                 <label for="content">İçerik</label>
-                <textarea id="content" name="content"><?php echo htmlspecialchars($_POST['content'] ?? ''); ?></textarea>
+                <textarea id="content" name="content"><?php echo htmlspecialchars($content ?? ''); ?></textarea>
             </div>
-            
+
             <div class="form-actions">
-                <button type="submit" class="btn-primary">Yazıyı Yayınla</button>
+                <button type="submit" class="btn-primary">Yayınla</button>
                 <a href="index.php" class="btn-secondary">İptal</a>
             </div>
         </form>
     </main>
-    
+
     <script>
         // EasyMDE editörünü başlat
-        const easyMDE = new EasyMDE({
+        var easyMDE = new EasyMDE({
             element: document.getElementById('content'),
             spellChecker: false,
-            autosave: {
-                enabled: true,
-                uniqueId: 'blog-post-content',
-                delay: 1000,
-            },
-            toolbar: [
-                'bold', 'italic', 'heading', '|',
-                'quote', 'unordered-list', 'ordered-list', '|',
-                'link', 'image', '|',
-                'preview', 'side-by-side', 'fullscreen', '|',
-                'guide'
-            ],
-            placeholder: 'Markdown formatında yazınızı buraya yazın...',
-            status: ['autosave', 'lines', 'words', 'cursor']
+            status: ['lines', 'words'],
+            uploadImage: true,
+            imageUploadEndpoint: 'new-post.php',
+            imageMaxSize: <?php echo MAX_FILE_SIZE; ?>,
+            imageAccept: '<?php echo '.'.implode(',.', ALLOWED_EXTENSIONS); ?>',
+            imageUploadFunction: function(file, onSuccess, onError) {
+                var formData = new FormData();
+                formData.append('image', file);
+
+                fetch('new-post.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        onSuccess(result.file.url);
+                    } else {
+                        onError(result.message);
+                    }
+                })
+                .catch(error => {
+                    onError('Dosya yüklenirken bir hata oluştu.');
+                });
+            }
         });
-        
-        // Form submit fonksiyonu
-        function submitForm(e) {
-            e.preventDefault();
-            
-            // İçeriği al ve textarea'ya kopyala
-            const content = easyMDE.value();
-            document.getElementById('content').value = content;
-            
-            // Form verilerini kontrol et
-            const title = document.getElementById('title').value.trim();
-            const category = document.getElementById('category').value.trim();
-            const tags = document.getElementById('tags').value.trim();
-            
-            if (!title) {
-                alert('Başlık boş olamaz.');
-                return false;
-            }
-            
-            if (!category) {
-                alert('Kategori boş olamaz.');
-                return false;
-            }
-            
-            if (!tags) {
-                alert('En az bir etiket ekleyin.');
-                return false;
-            }
-            
-            if (!content) {
-                alert('İçerik boş olamaz.');
-                return false;
-            }
-            
-            // Form'u manuel olarak gönder
-            const form = document.getElementById('postForm');
-            const formData = new FormData(form);
-            
-            fetch(form.action, {
-                method: 'POST',
-                body: formData
-            }).then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                }
-            }).catch(error => {
-                console.error('Hata:', error);
-                alert('Bir hata oluştu. Lütfen tekrar deneyin.');
-            });
-            
-            return false;
-        }
-        
+
+        // Form gönderilmeden önce içeriği güncelle
+        document.getElementById('postForm').addEventListener('submit', function(e) {
+            document.getElementById('content').value = easyMDE.value();
+        });
+
         // Etiket ekleme fonksiyonu
         function addTag(tag) {
-            const tagsInput = document.getElementById('tags');
-            const currentTags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t);
+            var tagsInput = document.getElementById('tags');
+            var currentTags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t);
             
             if (!currentTags.includes(tag)) {
                 currentTags.push(tag);
