@@ -36,9 +36,6 @@ $pageTitle = $post['title'] . " - Blog";
 // Parsedown örneği oluştur
 $parsedown = new Parsedown();
 $parsedown->setSafeMode(true);
-
-// Header'ı dahil et
-include_once '../header.php';
 ?>
 
 <!DOCTYPE html>

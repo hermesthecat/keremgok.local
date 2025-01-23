@@ -21,9 +21,6 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 // Parsedown örneği oluştur
 $parsedown = new Parsedown();
 $parsedown->setSafeMode(true);
-
-// Header'ı dahil et
-include_once '../header.php';
 ?>
 
 <!DOCTYPE html>

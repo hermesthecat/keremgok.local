@@ -55,9 +55,6 @@ $allTags = getAllTags();
 
 // Sayfa başlığı
 $pageTitle = "Yeni Yazı - Blog";
-
-// Header'ı dahil et
-include_once '../header.php';
 ?>
 
 <!DOCTYPE html>
