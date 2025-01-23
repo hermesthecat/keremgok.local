@@ -21,12 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
         images.forEach(img => imageObserver.observe(img));
     }
 
-    // Blog yazılarını filtreleme
-    const searchInput = document.querySelector('.blog-search');
-    if (searchInput) {
-        searchInput.addEventListener('input', filterPosts);
-    }
-
     // "Devamını Oku" butonları için smooth scroll
     const readMoreLinks = document.querySelectorAll('.read-more');
     readMoreLinks.forEach(link => {

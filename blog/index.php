@@ -41,11 +41,6 @@ $parsedown->setSafeMode(true);
             <a href="new-post.php" class="btn-primary">Yeni Yazı</a>
         </div>
 
-        <!-- Arama kutusu -->
-        <div class="search-container">
-            <input type="text" class="blog-search" placeholder="Blog yazılarında ara...">
-        </div>
-
         <!-- Kategori ve Etiket Menüsü -->
         <aside class="blog-sidebar">
             <div class="categories">
