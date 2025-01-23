@@ -194,10 +194,10 @@ function parseYaml($yaml)
             $key = trim($parts[0]);
             $value = trim($parts[1]);
 
-            // Etiketleri dizi olarak işle
-            if ($key === 'tags') {
+            // Etiketleri ve kategorileri dizi olarak işle
+            if ($key === 'tags' || $key === 'category') {
                 $value = str_replace(['[', ']', ' '], '', $value);
-                $data[$key] = explode(',', $value);
+                $data[$key] = array_map('trim', explode(',', $value));
             } else {
                 $data[$key] = $value;
             }

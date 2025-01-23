@@ -1,7 +1,7 @@
 ---
 title: Merhaba Dünya
 author: A. Kerem Gök
-category: Genel, sdfsdf
+category: [Genel,sdfsdf,dsfds]
 tags: [markdown,blog,php]
 ---
 

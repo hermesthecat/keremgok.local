@@ -95,9 +95,13 @@ $parsedown->setSafeMode(true);
                     echo '<span class="post-date">' . date('d.m.Y', strtotime($post['created_at'])) . '</span>';
                     echo '<span class="post-author">' . htmlspecialchars($post['author']) . '</span>';
                     if (isset($post['category'])) {
-                        echo '<span class="post-category">';
-                        echo '<a href="?category=' . urlencode($post['category']) . '">';
-                        echo htmlspecialchars($post['category']) . '</a></span>';
+                        $categories = is_array($post['category']) ? $post['category'] : [$post['category']];
+                        foreach ($categories as $cat) {
+                            echo '<span class="post-category">';
+                            echo '<a href="?category=' . urlencode(trim($cat)) . '">';
+                            echo htmlspecialchars(trim($cat)) . '</a>';
+                            echo '</span>';
+                        }
                     }
                     echo '</div>';
 

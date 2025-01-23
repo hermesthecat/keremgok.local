@@ -74,7 +74,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_FILES['image'])) {
             $markdown = "---\n";
             $markdown .= "title: " . $title . "\n";
             $markdown .= "author: " . AUTHOR_NAME . "\n";
-            $markdown .= "category: " . $categories_input . "\n";
+
+            // Kategorileri dizi olarak kaydet
+            $categoryArray = array_map('trim', explode(',', $categories_input));
+            $markdown .= "category: [" . implode(',', $categoryArray) . "]\n";
 
             if (!empty($tags)) {
                 $tagArray = array_map('trim', explode(',', $tags));

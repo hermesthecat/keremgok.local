@@ -88,18 +88,18 @@ $pageTitle = $post['title'] . " - Blog";
             <div class="post-header">
                 <h1><?php echo htmlspecialchars($post['title']); ?></h1>
                 <div class="post-meta">
-                    <span class="post-author"><?php echo htmlspecialchars($post['author']); ?></span>
+                    <span class="post-author"> <?php echo htmlspecialchars($post['author']); ?></span>
                     <span class="post-date"> <?php echo date('d.m.Y', strtotime($post['created_at'])); ?></span>
-                    <?php if (isset($post['category'])): ?>
-                        <span class="post-category"> <?php
-                                                        $categories = is_array($post['category']) ? $post['category'] : [$post['category']];
-                                                        foreach ($categories as $i => $category) {
-                                                            if ($i > 0) echo ', ';
-                                                            echo '<a href="index.php?category=' . urlencode($category) . '">' .
-                                                                htmlspecialchars($category) . '</a>';
-                                                        }
-                                                        ?></span>
-                    <?php endif; ?>
+                    <?php if (isset($post['category'])):
+                        $categories = is_array($post['category']) ? $post['category'] : [$post['category']];
+                        foreach ($categories as $cat): ?>
+                            <span class="post-category">
+                                <a href="index.php?category=<?php echo urlencode(trim($cat)); ?>">
+                                    <?php echo htmlspecialchars(trim($cat)); ?>
+                                </a>
+                            </span>
+                    <?php endforeach;
+                    endif; ?>
                 </div>
             </div>
 

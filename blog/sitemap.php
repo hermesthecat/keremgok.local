@@ -53,7 +53,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
     foreach (array_keys($categories) as $category) {
     ?>
         <url>
-            <loc>http://<?php echo $_SERVER['HTTP_HOST']; ?>/index.php?category=<?php echo urlencode($category); ?></loc>
+            <loc>http://<?php echo $_SERVER['HTTP_HOST']; ?>/index.php?category=<?php echo urlencode(trim($category)); ?></loc>
             <lastmod><?php echo $lastmod; ?></lastmod>
             <changefreq>weekly</changefreq>
             <priority>0.6</priority>
@@ -66,10 +66,11 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
     foreach (array_keys($tags) as $tag) {
     ?>
         <url>
-            <loc>http://<?php echo $_SERVER['HTTP_HOST']; ?>/index.php?tag=<?php echo urlencode($tag); ?></loc>
+            <loc>http://<?php echo $_SERVER['HTTP_HOST']; ?>/index.php?tag=<?php echo urlencode(trim($tag)); ?></loc>
             <lastmod><?php echo $lastmod; ?></lastmod>
             <changefreq>weekly</changefreq>
             <priority>0.6</priority>
         </url>
     <?php } ?>
+
 </urlset>
