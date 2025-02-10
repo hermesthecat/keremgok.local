@@ -34,9 +34,7 @@
 session_start();
 header('Content-Type: text/html; charset=utf-8');
 
-// Authentication credentials / Kimlik doğrulama bilgileri
-$admin_username = "admin";
-$admin_password = "1234"; // Should use hashing in production / Gerçek ortamda hash kullanılmalı
+include __DIR__ . '/config.php';
 
 // Session check / Oturum kontrolü
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
