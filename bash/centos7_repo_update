@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo -e "\e[40;38;5;82mCentOS 7 Repo Guncellemesi basliyor...\e[0m"
+
+sudo sed -i 's|^mirrorlist=|#mirrorlist=|g; s|^#baseurl=http://mirror.centos.org/centos/\$releasever|baseurl=https://vault.centos.org/7.9.2009/|g' /etc/yum.repos.d/CentOS-*
+
+echo -e "\e[40;38;5;82mCentOS 7 Repo Guncellemesi tamamlandi.\e[0m"
+
+
+
