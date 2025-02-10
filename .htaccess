@@ -1,15 +1,3 @@
-#------------------------------------------------------------------------------
-# This file provides server security limiting access to the localhost only.
-# Comment next four lines to deactivate. (Allows external access)
-#------------------------------------------------------------------------------
-
-#------------------------------------------------------------------------------
-# To allow execution of cgi scripts in this directory uncomment next two lines.
-#------------------------------------------------------------------------------.
-
-AddHandler cgi-script .bat .exe .pl .cgi
-Options +ExecCGI +FollowSymLinks
-
 # 404 Error Page
 ErrorDocument 404 /index.php
 
@@ -18,6 +6,15 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ /index.php [L,QSA]
+
+# if HTTP_HOST is not keremgok.local, redirect to https
+RewriteCond %{HTTP_HOST} !^keremgok.local$ [NC]
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# if HTTP_HOST is keremgok.local, allow cgi scripts
+RewriteCond %{HTTP_HOST} ^keremgok.local$ [NC]
+AddHandler cgi-script .bat .exe .pl .cgi
+Options +ExecCGI +FollowSymLinks
 
 # Cache'i devre dışı bırak
 <IfModule mod_headers.c>

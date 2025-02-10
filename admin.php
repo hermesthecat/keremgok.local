@@ -216,33 +216,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['api'])) {
     <script src="admin.js"></script>
 
     <script>
-    // Update Analytics ID / Analytics ID'yi güncelle
-    function updateAnalytics() {
-        const analyticsId = document.getElementById("analyticsId").value;
+        // Update Analytics ID / Analytics ID'yi güncelle
+        function updateAnalytics() {
+            const analyticsId = document.getElementById("analyticsId").value;
 
-        if (!analyticsId) {
-            alert("Lütfen Analytics ID giriniz!");
-            return;
-        }
-
-        // Send update request / Güncelleme isteği gönder
-        fetch("admin.php?api=1", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                action: "updateAnalytics",
-                analyticsId: analyticsId
-            }),
-        })
-        .then((response) => response.json())
-        .then((result) => {
-            if (result.success) {
-                alert("Analytics ID başarıyla güncellendi!");
+            if (!analyticsId) {
+                alert("Lütfen Analytics ID giriniz!");
+                return;
             }
-        });
-    }
+
+            // Send update request / Güncelleme isteği gönder
+            fetch("admin.php?api=1", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        action: "updateAnalytics",
+                        analyticsId: analyticsId
+                    }),
+                })
+                .then((response) => response.json())
+                .then((result) => {
+                    if (result.success) {
+                        alert("Analytics ID başarıyla güncellendi!");
+                    }
+                });
+        }
     </script>
 </body>
 

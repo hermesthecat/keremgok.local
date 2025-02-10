@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo -e "\e[40;38;5;82mTarih saat guncelleme islemi basliyor...\e[0m";
+sleep 2;
+sudo timedatectl set-timezone Europe/Istanbul
+systemctl stop ntpd.service
+systemctl disable ntpd.service
+yum install chrony -y
+systemctl enable chronyd
+sed -i '/server /d' /etc/chrony.conf
+echo -e '\nserver ntp1.ulak.net.tr minpoll 2 maxpoll 9\nserver europe.pool.ntp.org minpoll 2 maxpoll 9' >> /etc/chrony.conf
+systemctl restart chronyd
+/sbin/hwclock --systohc
+chronyc tracking
+sleep 3
+chronyc sources
+echo -e "\e[40;38;5;82mTarih saat guncelleme islemi tamamlandi.\e[0m";
+date

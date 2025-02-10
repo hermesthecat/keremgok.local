@@ -27,18 +27,23 @@
 
 /* Theme Variables / Tema Değişkenleri */
 :root[data-theme="light"] {
-  --bg-color: #ffffff; /* Background color / Arka plan rengi */
-  --text-color: #000000; /* Text color / Yazı rengi */
+  --bg-color: #ffffff;
+  /* Background color / Arka plan rengi */
+  --text-color: #000000;
+  /* Text color / Yazı rengi */
 }
 
 :root[data-theme="dark"] {
-  --bg-color: #1a1a1a; /* Background color / Arka plan rengi */
-  --text-color: #ffffff; /* Text color / Yazı rengi */
+  --bg-color: #1a1a1a;
+  /* Background color / Arka plan rengi */
+  --text-color: #ffffff;
+  /* Text color / Yazı rengi */
 }
 
 /* Basic HTML Elements / Temel HTML Elementleri */
 html {
-  color-scheme: light dark; /* System color scheme support / Sistem renk şeması desteği */
+  color-scheme: light dark;
+  /* System color scheme support / Sistem renk şeması desteği */
 }
 
 /* Main Content Layout / Ana İçerik Düzeni */
@@ -227,7 +232,8 @@ body {
 
 /* Link Styles / Link Stilleri */
 a {
-  color: #0066cc; /* Light theme link color / Açık tema link rengi */
+  color: #0066cc;
+  /* Light theme link color / Açık tema link rengi */
 }
 
 /* Dark Theme Link Color / Koyu Tema Link Rengi */
