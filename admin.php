@@ -54,6 +54,13 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     }
 }
 
+// Handle logout / Çıkış işlemini yönet
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: admin.php');
+    exit;
+}
+
 // Load data file / Veri dosyasını yükle
 $json_file = 'data.json';
 $data = json_decode(file_get_contents($json_file), true);
@@ -166,6 +173,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['api'])) {
 
 <body>
     <div class="container">
+        <div class="header-actions">
+            <a href="?logout=1" class="logout-btn">Çıkış Yap</a>
+        </div>
         <h1>Link Yönetimi</h1>
 
         <!-- Google Analytics Settings / Google Analytics Ayarları -->
