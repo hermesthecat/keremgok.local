@@ -54,6 +54,10 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     }
 }
 
+// Load data file / Veri dosyasını yükle
+$json_file = 'data.json';
+$data = json_decode(file_get_contents($json_file), true);
+
 /**
  * Displays the login form
  * Giriş formunu görüntüler
@@ -96,10 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['api'])) {
 
     // Read JSON input / JSON girişini oku
     $input = json_decode(file_get_contents('php://input'), true);
-
-    // Load data file / Veri dosyasını yükle
-    $json_file = 'data.json';
-    $data = json_decode(file_get_contents($json_file), true);
 
     // Process API actions / API işlemlerini işle
     if (isset($input['action'])) {
