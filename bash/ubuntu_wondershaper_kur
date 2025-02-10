@@ -1,0 +1,83 @@
+#!/bin/bash
+
+args=("$@")
+
+if [ ${args[0]} ] && [ ${args[0]} == "sil" ]
+then
+ sudo systemctl disable --now wondershaper.service
+ sudo systemctl stop wondershaper.service
+ rm -rf /etc/systemd/wondershaper.conf
+ rm -rf /usr/local/bin/wondershaper
+ rm -rf /usr/local/sbin/wondershaper
+ rm -rf /bin/wondershaper
+
+ echo -e "\e[40;38;5;82mWonder Shaper Network Limitlendirme servis kaldırıldı.\e[0m";
+
+ systemctl daemon-reload
+exit;
+fi
+
+echo
+echo -e "\e[40;38;5;82mWonder Shaper Network Limitlendirme hızlı kurulum scripti çalıştırılıyor...\e[0m";
+echo
+
+sleep 1;
+int=`ip addr show | awk '/inet.*brd/{print $NF}'`;
+echo "Mevcut Interfaceler:"
+echo "$int";
+echo
+
+read -p "Lütfen Interface adını giriniz: "  intname
+if [ -z "$intname" ]
+then
+	intname=$int;
+fi
+
+echo "Seçtiğiniz Interface: $intname"
+
+read -p "Lütfen atayacağınız hızı Mbit türünden giriniz (Örn: 100) :"  girilenhiz
+if [ -z "$girilenhiz" > 0 ]
+then
+ girilenhiz='100';
+fi
+
+echo "Limit: $girilenhiz MBps"
+
+DSPEED=`expr $girilenhiz \* 1024`
+USPEED=`expr $girilenhiz \* 1024`
+
+echo "Başlanıyor..."
+sleep 1;
+
+apt-get install git -y
+cd /bin
+git clone https://github.com/magnific0/wondershaper.git
+cd wondershaper
+sudo make install
+echo "[wondershaper]
+IFACE='$intname'
+DSPEED='$DSPEED'
+USPEED='$USPEED'" > /etc/systemd/wondershaper.conf
+echo "[Unit]
+Description=Bandwidth shaper/Network rate limiter
+After=network-online.target
+Wants=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+EnvironmentFile=/etc/systemd/wondershaper.conf
+ExecStart=/usr/local/sbin/wondershaper -a \$IFACE -d \$DSPEED -u \$USPEED
+ExecStop=/usr/local/sbin/wondershaper -c -a \$IFACE
+
+[Install]
+WantedBy=multi-user.target" > /usr/local/lib/systemd/system/wondershaper.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now wondershaper.service
+sudo systemctl restart wondershaper.service
+echo "...."
+sleep 2;
+
+echo
+echo -e "\e[40;38;5;82mWonder Shaper Network Limitlendirme hızlı kurulum tamamlandı... İyi günlerde kullanın...\e[0m";
+echo
