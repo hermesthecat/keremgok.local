@@ -220,7 +220,7 @@ function generateLanguageAlternatives($domain, $languages)
   <?php generateLanguageAlternatives($domain, $languages); ?>
 
   <!-- Styles / Stiller -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="<?php echo $domain; ?>/style.css">
 
   <?php if ($googletag_id): ?>
     <!-- Google Analytics tracking code / Google Analytics takip kodu -->
@@ -284,7 +284,7 @@ function generateLanguageAlternatives($domain, $languages)
   </p>
 
   <!-- JavaScript for dropdown functionality / Açılır menü için JavaScript -->
-  <script src="script.js"></script>
+  <script src="<?php echo $domain; ?>/script.js"></script>
 </body>
 
 </html>
