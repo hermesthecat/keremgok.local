@@ -3,60 +3,120 @@
     "title": "a. kerem gök..",
     "intro": "Bu sayfayı görüyorsanız, hayatınızdan yaklaşık 10 saniye boşa harcandı demektir.",
     "langButton": "TR",
-    "langText": "Türkçe"
+    "langText": "Türkçe",
+    "meta_description": "A. Kerem Gök - Yazılım Geliştirici, Web Geliştirici ve Teknoloji Meraklısı. PHP, JavaScript, Python ve daha fazlası.",
+    "meta_keywords": "kerem gök, yazılım geliştirici, web geliştirici, php, javascript, python, web tasarım, seo, api geliştirme",
+    "og_title": "A. Kerem Gök - Yazılım Geliştirici",
+    "og_description": "Web geliştirme, API entegrasyonları ve modern teknolojiler konusunda uzman yazılım geliştirici.",
+    "twitter_title": "A. Kerem Gök - Yazılım Geliştirici",
+    "twitter_description": "Web geliştirme, API entegrasyonları ve modern teknolojiler konusunda uzman yazılım geliştirici."
   },
   "en": {
     "title": "a. kerem gok..",
     "intro": "If you are seeing this page, it means that approximately 10 seconds of your life have been wasted.",
     "langButton": "EN",
-    "langText": "English"
+    "langText": "English",
+    "meta_description": "A. Kerem Gok - Software Developer, Web Developer and Technology Enthusiast. PHP, JavaScript, Python and more.",
+    "meta_keywords": "kerem gok, software developer, web developer, php, javascript, python, web design, seo, api development",
+    "og_title": "A. Kerem Gok - Software Developer",
+    "og_description": "Expert software developer specializing in web development, API integrations, and modern technologies.",
+    "twitter_title": "A. Kerem Gok - Software Developer",
+    "twitter_description": "Expert software developer specializing in web development, API integrations, and modern technologies."
   },
   "ru": {
     "title": "a. kerem gok..",
     "intro": "Если вы видите эту страницу, значит примерно 10 секунд вашей жизни потрачены впустую.",
     "langButton": "RU",
-    "langText": "Русский"
+    "langText": "Русский",
+    "meta_description": "A. Kerem Gok - Разработчик программного обеспечения, веб-разработчик и технологический энтузиаст. PHP, JavaScript, Python и многое другое.",
+    "meta_keywords": "kerem gok, разработчик программного обеспечения, веб-разработчик, php, javascript, python, веб-дизайн, seo, разработка api",
+    "og_title": "A. Kerem Gok - Разработчик программного обеспечения",
+    "og_description": "Опытный разработчик программного обеспечения, специализирующийся на веб-разработке, API-интеграциях и современных технологиях.",
+    "twitter_title": "A. Kerem Gok - Разработчик программного обеспечения",
+    "twitter_description": "Опытный разработчик программного обеспечения, специализирующийся на веб-разработке, API-интеграциях и современных технологиях."
   },
   "ja": {
     "title": "a. kerem gok..",
     "intro": "このページを見ているということは、あなたの人生の約10秒が無駄になったということです。",
     "langButton": "JA",
-    "langText": "日本語"
+    "langText": "日本語",
+    "meta_description": "A. Kerem Gok - ソフトウェア開発者、ウェブ開発者、テクノロジー愛好家。PHP、JavaScript、Pythonなど。",
+    "meta_keywords": "kerem gok, ソフトウェア開発者, ウェブ開発者, php, javascript, python, ウェブデザイン, seo, api開発",
+    "og_title": "A. Kerem Gok - ソフトウェア開発者",
+    "og_description": "ウェブ開発、APIインテグレーション、最新技術を専門とするエキスパートソフトウェア開発者。",
+    "twitter_title": "A. Kerem Gok - ソフトウェア開発者",
+    "twitter_description": "ウェブ開発、APIインテグレーション、最新技術を専門とするエキスパートソフトウェア開発者。"
   },
   "zh": {
     "title": "a. kerem gok..",
     "intro": "如果您看到此页面，这意味着您的生命中大约有10秒被浪费了。",
     "langButton": "ZH",
-    "langText": "简体中文"
+    "langText": "简体中文",
+    "meta_description": "A. Kerem Gok - 软件开发工程师，网络开发工程师和技术爱好者。精通PHP、JavaScript、Python等。",
+    "meta_keywords": "kerem gok, 软件开发工程师, 网络开发工程师, php, javascript, python, 网页设计, seo, api开发",
+    "og_title": "A. Kerem Gok - 软件开发工程师",
+    "og_description": "专注于网络开发、API集成和现代技术的专业软件开发工程师。",
+    "twitter_title": "A. Kerem Gok - 软件开发工程师",
+    "twitter_description": "专注于网络开发、API集成和现代技术的专业软件开发工程师。"
   },
   "ko": {
     "title": "a. kerem gok..",
     "intro": "이 페이지를 보고 계시다면, 귀하의 인생에서 약 10초가 낭비되었다는 의미입니다.",
     "langButton": "KO",
-    "langText": "한국어"
+    "langText": "한국어",
+    "meta_description": "A. Kerem Gok - 소프트웨어 개발자, 웹 개발자 및 기술 애호가. PHP, JavaScript, Python 등.",
+    "meta_keywords": "kerem gok, 소프트웨어 개발자, 웹 개발자, php, javascript, python, 웹 디자인, seo, api 개발",
+    "og_title": "A. Kerem Gok - 소프트웨어 개발자",
+    "og_description": "웹 개발, API 통합 및 현대 기술을 전문으로 하는 전문 소프트웨어 개발자.",
+    "twitter_title": "A. Kerem Gok - 소프트웨어 개발자",
+    "twitter_description": "웹 개발, API 통합 및 현대 기술을 전문으로 하는 전문 소프트웨어 개발자."
   },
   "fr": {
     "title": "a. kerem gok..",
     "intro": "Si vous voyez cette page, cela signifie qu'environ 10 secondes de votre vie ont été gaspillées.",
     "langButton": "FR",
-    "langText": "Français"
+    "langText": "Français",
+    "meta_description": "A. Kerem Gok - Développeur logiciel, développeur web et passionné de technologie. PHP, JavaScript, Python et plus encore.",
+    "meta_keywords": "kerem gok, développeur logiciel, développeur web, php, javascript, python, conception web, seo, développement api",
+    "og_title": "A. Kerem Gok - Développeur Logiciel",
+    "og_description": "Développeur logiciel expert spécialisé dans le développement web, les intégrations API et les technologies modernes.",
+    "twitter_title": "A. Kerem Gok - Développeur Logiciel",
+    "twitter_description": "Développeur logiciel expert spécialisé dans le développement web, les intégrations API et les technologies modernes."
   },
   "es": {
     "title": "a. kerem gok..",
     "intro": "Si ves esta página, significa que aproximadamente 10 segundos de tu vida han sido desperdiciados.",
     "langButton": "ES",
-    "langText": "Español"
+    "langText": "Español",
+    "meta_description": "A. Kerem Gok - Desarrollador de software, desarrollador web y entusiasta de la tecnología. PHP, JavaScript, Python y más.",
+    "meta_keywords": "kerem gok, desarrollador de software, desarrollador web, php, javascript, python, diseño web, seo, desarrollo de api",
+    "og_title": "A. Kerem Gok - Desarrollador de Software",
+    "og_description": "Desarrollador de software experto especializado en desarrollo web, integraciones API y tecnologías modernas.",
+    "twitter_title": "A. Kerem Gok - Desarrollador de Software",
+    "twitter_description": "Desarrollador de software experto especializado en desarrollo web, integraciones API y tecnologías modernas."
   },
   "de": {
     "title": "a. kerem gok..",
     "intro": "Wenn Sie diese Seite sehen, bedeutet das, dass etwa 10 Sekunden Ihres Lebens verschwendet wurden.",
     "langButton": "DE",
-    "langText": "Deutsch"
+    "langText": "Deutsch",
+    "meta_description": "A. Kerem Gok - Softwareentwickler, Webentwickler und Technologie-Enthusiast. PHP, JavaScript, Python und mehr.",
+    "meta_keywords": "kerem gok, softwareentwickler, webentwickler, php, javascript, python, webdesign, seo, api-entwicklung",
+    "og_title": "A. Kerem Gok - Softwareentwickler",
+    "og_description": "Erfahrener Softwareentwickler, spezialisiert auf Webentwicklung, API-Integrationen und moderne Technologien.",
+    "twitter_title": "A. Kerem Gok - Softwareentwickler",
+    "twitter_description": "Erfahrener Softwareentwickler, spezialisiert auf Webentwicklung, API-Integrationen und moderne Technologien."
   },
   "it": {
     "title": "a. kerem gok..",
     "intro": "Se stai vedendo questa pagina, significa che circa 10 secondi della tua vita sono stati sprecati.",
     "langButton": "IT",
-    "langText": "Italiano"
+    "langText": "Italiano",
+    "meta_description": "A. Kerem Gok - Sviluppatore software, sviluppatore web e appassionato di tecnologia. PHP, JavaScript, Python e altro.",
+    "meta_keywords": "kerem gok, sviluppatore software, sviluppatore web, php, javascript, python, web design, seo, sviluppo api",
+    "og_title": "A. Kerem Gok - Sviluppatore Software",
+    "og_description": "Sviluppatore software esperto specializzato in sviluppo web, integrazioni API e tecnologie moderne.",
+    "twitter_title": "A. Kerem Gok - Sviluppatore Software",
+    "twitter_description": "Sviluppatore software esperto specializzato in sviluppo web, integrazioni API e tecnologie moderne."
   }
 }

@@ -193,21 +193,23 @@ function generateLanguageAlternatives($domain, $languages)
   <title><?php echo htmlspecialchars(translate('title')); ?></title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="A. Kerem Gök - Software Developer" />
-  <meta name="keywords" content="kerem gök, software developer, web developer, javascript, php" />
+  <meta name="description" content="<?php echo htmlspecialchars(translate('meta_description')); ?>" />
+  <meta name="keywords" content="<?php echo htmlspecialchars(translate('meta_keywords')); ?>" />
   <meta name="author" content="A. Kerem Gök" />
 
   <!-- Open Graph / Facebook meta tags -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="<?php echo $domain; ?>/" />
-  <meta property="og:title" content="A. Kerem Gök" />
-  <meta property="og:description" content="A. Kerem Gök - Software Developer" />
+  <meta property="og:title" content="<?php echo htmlspecialchars(translate('og_title')); ?>" />
+  <meta property="og:description" content="<?php echo htmlspecialchars(translate('og_description')); ?>" />
+  <meta property="og:image" content="<?php echo $domain; ?>/og-image.jpg" />
 
   <!-- Twitter meta tags -->
-  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="<?php echo $domain; ?>/" />
-  <meta name="twitter:title" content="A. Kerem Gök" />
-  <meta name="twitter:description" content="A. Kerem Gök - Software Developer" />
+  <meta name="twitter:title" content="<?php echo htmlspecialchars(translate('twitter_title')); ?>" />
+  <meta name="twitter:description" content="<?php echo htmlspecialchars(translate('twitter_description')); ?>" />
+  <meta name="twitter:image" content="<?php echo $domain; ?>/twitter-image.jpg" />
   <?php if ($twitter_username): ?>
     <meta name="twitter:creator" content="@<?php echo htmlspecialchars($twitter_username); ?>" />
   <?php endif; ?>
