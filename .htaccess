@@ -11,6 +11,9 @@ RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 # Sitemap.xml için yönlendirme
 RewriteRule ^sitemap\.xml$ sitemap.php [L]
 
+# Robots.txt için yönlendirme
+RewriteRule ^robots\.txt$ robots.php [L]
+
 # Trailing slash ekle
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_URI} !/$

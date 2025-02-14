@@ -218,6 +218,9 @@ function generateLanguageAlternatives($domain, $languages)
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="<?php echo $domain; ?>/" />
 
+  <!-- Sitemap -->
+  <link rel="sitemap" href="<?php echo $domain; ?>/sitemap.xml" />
+
   <!-- Language alternatives / Dil alternatifleri -->
   <?php generateLanguageAlternatives($domain, $languages); ?>
 
